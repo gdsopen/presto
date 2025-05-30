@@ -54,7 +54,7 @@ jobs:
         run: pnpm prepare
 
       - name: Format
-        run: pnpm format-check
+        run: pnpm format:check
 
   typeCheck:
     name: Type Check
@@ -77,5 +77,5 @@ jobs:
       - name: Codegen
         run: pnpm prepare
 
-      - name: TSC
+      - name: type check
         run: pnpm type-check
