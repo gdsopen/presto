@@ -47,24 +47,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-      - name: Enable corepack
-        shell: bash
-        run: corepack enable
-
-      - name: Install Node.js
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version-file: "package.json"
-          cache: pnpm
-
-      - name: Use cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-tauri-app-aeromate-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-tauri-app-aeromate-${{ hashFiles('**/pnpm-lock.yaml') }}-
-
+          node-version: 22
+          cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         shell: bash
@@ -94,7 +85,6 @@ jobs:
           Compress-Archive -Path bundle -DestinationPath bundle-${{ matrix.os }}.zip
         shell: pwsh
         if: matrix.os == 'windows-latest'
-
 
       - name: Upload release
         run: |
