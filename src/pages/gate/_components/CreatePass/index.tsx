@@ -37,7 +37,7 @@ export const CreatePass: React.FC = () => {
   const [token, _setToken] = useAtom(authTokenAtom);
   const [ticketData, setTitcketData] = useState<TicketData>();
   const [imageByteArray, setImageByteArray] = useState<Uint8Array>();
-  const [barcodeByteArray, setBarcodeByteArray] = useState<Uint8Array>();
+  const [_barcodeByteArray, setBarcodeByteArray] = useState<Uint8Array>();
   const ticketSize = {
     width: 580,
     height: 1500,
@@ -58,10 +58,10 @@ export const CreatePass: React.FC = () => {
           compartment === "F"
             ? "FIRST CLASS"
             : compartment === "C"
-              ? "BUSINESS CLASS"
-              : compartment === "P"
-                ? "PREMIUM ECONOMY"
-                : "ECONOMY CLASS",
+            ? "BUSINESS CLASS"
+            : compartment === "P"
+            ? "PREMIUM ECONOMY"
+            : "ECONOMY CLASS",
         firstName: data.data?.pnr?.firstName || "",
         lastName: data.data?.pnr?.lastName || "",
         middleName: data.data?.pnr?.middleName || "",
@@ -143,7 +143,7 @@ export const CreatePass: React.FC = () => {
       ctx.fillText(
         `${ticketData.firstName} ${ticketData.lastName} ${ticketData.middleName} ${ticketData.nameSuffix}`,
         -500,
-        -175,
+        -175
       );
       ctx.fillText(ticketData.flightDate, -180, -250);
       ctx.fillText(ticketData.compartment, -180, -210);
