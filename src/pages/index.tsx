@@ -113,6 +113,7 @@ function App() {
             </button>
           </form>
           <a href="/home">ホーム</a>
+          <a href="/gate">Gate</a>
           <p>
             Presto IDをお持ちではありませんか?
             <br />
