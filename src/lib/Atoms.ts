@@ -1,3 +1,4 @@
+import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
 export type Printer = {
@@ -6,8 +7,18 @@ export type Printer = {
   device_id: number;
 };
 
-export const printerAtom = atomWithStorage("selectedPrinter", {
+export const printerAtom = atomWithStorage<Printer>("selectedPrinter", {
   name: "",
   vendor_id: 0,
   device_id: 0,
-} as Printer);
+});
+
+export type AuthToken = {
+  token: string;
+  loading: boolean;
+};
+
+export const authTokenAtom = atom<AuthToken>({
+  token: "",
+  loading: false,
+});

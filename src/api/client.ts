@@ -1,5 +1,5 @@
 import createClient from "openapi-fetch";
-import type { paths } from "./client";
+import type { paths } from "./generated/types";
 
 const endpoint = import.meta.env.VITE_PUBLIC_ENDPOINT;
 
@@ -207,19 +207,34 @@ export const getPnrByName = async (
   }
 };
 
-export const getTicketFullData = async (id: string, token: string) => {
-  try {
-    const res = await client.POST("/pass/id", {
-      headers: { Authorization: `Bearer ${token}` },
-      body: {
-        id: id,
-      },
-    });
-    if (res.error) {
-      throw new Error(`Error: ${res.error}`);
-    }
-    return res;
-  } catch (e) {
-    throw new Error(`Failed to get ticket full data: ${e}`);
-  }
+type TicketResponse = {
+  data: {
+    flight: {
+      compartmentCode: string;
+      departureDate: string;
+      operatingCarrier: string;
+      flightNumber: number;
+      departurePort: string;
+      arrivalPort: string;
+      seatNumber: string;
+      remarks: string;
+    };
+    pnr: {
+      firstName: string;
+      lastName: string;
+      middleName: string;
+      nameTitle: string;
+    };
+  };
+};
+
+export const getTicketFullData = async (
+  id: string,
+  token: string,
+): Promise<TicketResponse> => {
+  const response = await client.POST("/pass", {
+    body: { id },
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return response.data as TicketResponse;
 };

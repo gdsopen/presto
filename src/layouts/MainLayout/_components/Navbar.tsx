@@ -1,12 +1,16 @@
+"use client";
 import {
   IconTriangleInvertedFilled,
   IconUserSquareRounded,
 } from "@tabler/icons-react";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 import { css } from "../../../../styled-system/css";
+import { userId } from "../../../api/client";
 import { Button } from "../../../components/Button";
 import { MenuItem, PopoverMenu } from "../../../components/PopoverMenu";
 import { PrinterSettings } from "../../../components/PrinterSettings";
-
+import { authTokenAtom } from "../../../lib/Atoms";
 export const Navbar: React.FC = () => {
   return (
     <div
@@ -22,8 +26,8 @@ export const Navbar: React.FC = () => {
       })}
     >
       <div>
-        <h1 className={css({ color: "#60abe0", fontWeight: 700 })}>
-          Presto 業務メニュー
+        <h1 className={css({ color: "#555", fontWeight: 700 })}>
+          Presto/Duties
         </h1>
         <div className={css({ display: "flex", gap: "10px" })}>
           <Button>Welcome</Button>
@@ -47,13 +51,8 @@ export const Navbar: React.FC = () => {
             },
           })}
         >
-          <IconTriangleInvertedFilled size={10} />
           <IconUserSquareRounded size={30} />
-          <p>
-            Allial
-            <br />
-            HND3-INTL
-          </p>
+          <IconTriangleInvertedFilled size={10} />
         </Button>
       </PopoverMenu>
     </div>
@@ -61,9 +60,37 @@ export const Navbar: React.FC = () => {
 };
 
 const MenuItems: React.FC = () => {
+  const [userData, setUserData] = useState<string>("");
+  const [token, setToken] = useAtom(authTokenAtom);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const data = await userId(token.token);
+        setUserData(data.data?.login || "");
+      } catch (error) {
+        console.error(error);
+        setUserData("");
+      }
+    };
+    if (token.token) {
+      fetchUserData();
+    }
+  }, [token.token]);
+
+  const logout = () => {
+    setToken({ token: "", loading: false });
+    window.location.href = "/";
+  };
+
   return (
     <div>
-      <MenuItem>ログアウト</MenuItem>
+      <a href="/users">
+        <MenuItem>
+          User: <br />
+          {userData}
+        </MenuItem>
+      </a>
+      <MenuItem onClick={logout}>Logout</MenuItem>
     </div>
   );
 };

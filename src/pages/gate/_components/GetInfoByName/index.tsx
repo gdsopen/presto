@@ -1,14 +1,12 @@
 import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../../../styled-system/css";
 import {
   type PassengerFlightRecordResponse,
   getPnrByName,
-} from "../../../../scripts/api";
-
-const authTokenAtom = atomWithStorage("authToken", "");
+} from "../../../../api/client";
+import { authTokenAtom } from "../../../../lib/Atoms";
 
 export const GetInfoByName: React.FC = () => {
   const [token, _setToken] = useAtom(authTokenAtom);
@@ -23,7 +21,7 @@ export const GetInfoByName: React.FC = () => {
     lastName?: string;
     middleName?: string;
   }) => {
-    await getPnrByName({ firstName, lastName, middleName }, token).then(
+    await getPnrByName({ firstName, lastName, middleName }, token.token).then(
       (res) => {
         setFlights(res.data as PassengerFlightRecordResponse[]);
       },

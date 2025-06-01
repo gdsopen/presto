@@ -188,26 +188,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/pass/id": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Search for a passenger PNR by name
-     * @description 乗客のPNRを名前ベースで検索
-     */
-    post: operations["generatePassengerFullData"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -710,42 +690,6 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["PassengerFlightRecord"][];
-        };
-      };
-      /** @description Failed to find passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  generatePassengerFullData: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          id: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Passenger found successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            pnr?: components["schemas"]["PassengerNameRecord"];
-            flight?: components["schemas"]["PassengerFlightRecord"];
-          };
         };
       };
       /** @description Failed to find passenger */

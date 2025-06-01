@@ -1,0 +1,472 @@
+openapi: 3.0.0
+info:
+  title: Aeromate Backend API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8787
+    description: Local server
+components:
+  schemas:
+    PassengerNameRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        pnrId:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        nameTitle:
+          type: string
+        passengerDescription:
+          type: number
+        checkInSource:
+          type: string
+        boardingPassIssuanceSource:
+          type: string
+        issuanceDate:
+          type: string
+        documentType:
+          type: string
+        boardingPassIssuerDesignator:
+          type: string
+        baggageTagNumber:
+          type: string
+        firstBaggageTagNumber:
+          type: string
+        secondBaggageTagNumber:
+          type: string
+        securityDataType:
+          type: string
+        securityData:
+          type: string
+    PassengerFlightRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        pnrId:
+          type: string
+        departurePort:
+          type: string
+        arrivalPort:
+          type: string
+        operatingCarrier:
+          type: string
+        flightNumber:
+          type: number
+        departureDate:
+          type: string
+        compartmentCode:
+          type: string
+        seatNumber:
+          type: string
+        checkInSequenceNumber:
+          type: number
+        remarks:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths:
+  /pnr/passenger:
+    post:
+      tags:
+        - Passenger
+      operationId: createPassenger
+      description: 新しい乗客レコードを作成します
+      summary: Create a new passenger record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerNameRecord'
+      responses:
+        '200':
+          description: Passenger created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerNameRecord'
+        '500':
+          description: Failed to create passenger
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - Passenger
+      operationId: updatePassenger
+      description: 既存の乗客レコードを更新します
+      summary: Update an existing passenger record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerNameRecord'
+      responses:
+        '200':
+          description: Passenger updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  pnrId:
+                    type: string
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  middleName:
+                    type: string
+                  nameTitle:
+                    type: string
+                  passengerDescription:
+                    type: number
+                  checkInSource:
+                    type: string
+                  boardingPassIssuanceSource:
+                    type: string
+                  issuanceDate:
+                    type: string
+                  documentType:
+                    type: string
+                  boardingPassIssuerDesignator:
+                    type: string
+                  baggageTagNumber:
+                    type: string
+                  firstBaggageTagNumber:
+                    type: string
+                  secondBaggageTagNumber:
+                    type: string
+                  securityDataType:
+                    type: string
+                  securityData:
+                    type: string
+                  passengerUserId:
+                    type: string
+                  email:
+                    type: string
+        '500':
+          description: Failed to update passenger
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Passenger
+      operationId: deletePassenger
+      description: 乗客レコードを削除します
+      summary: Delete a passenger record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Passenger deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerNameRecord'
+        '500':
+          description: Failed to delete passenger
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - Passenger
+      operationId: getPassenger
+      description: 乗客レコードを取得します
+      summary: Get a passenger record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Passenger found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerNameRecord'
+        '500':
+          description: Failed to find passenger
+      security:
+        - bearerAuth: []
+  /pnr/passenger/search:
+    post:
+      tags:
+        - Passenger
+      operationId: searchPassenger
+      description: 乗客レコードを検索します
+      summary: Search for a passenger record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        '200':
+          description: Passenger found successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerNameRecord'
+        '500':
+          description: Failed to find passenger
+      security:
+        - bearerAuth: []
+  /pnr/flight:
+    post:
+      tags:
+        - Flight
+      operationId: createFlight
+      description: 新しいフライトレコードを作成します
+      summary: Create a new flight record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerFlightRecord'
+      responses:
+        '200':
+          description: Flight created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to create flight record
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - Flight
+      operationId: updateFlight
+      description: 既存のフライトレコードを更新します
+      summary: Update an existing flight record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PassengerFlightRecord'
+      responses:
+        '200':
+          description: Flight updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to update flight record
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Flight
+      operationId: deleteFlight
+      description: フライトレコードを削除します
+      summary: Delete a flight record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Flight deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to delete flight record
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - Flight
+      operationId: getFlight
+      description: フライトレコードを取得します
+      summary: Get a flight record
+      responses:
+        '200':
+          description: Flight found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to find flight record
+      security:
+        - bearerAuth: []
+  /accounts/new:
+    post:
+      tags:
+        - Account
+      operationId: createAccount
+      description: 新しいアカウントを作成します
+      summary: Create a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Account created successfully
+        '500':
+          description: Failed to create user
+      security:
+        - bearerAuth: []
+  /accounts/login:
+    post:
+      tags:
+        - Account
+      operationId: login
+      description: アカウントにログインします
+      summary: Login to an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Invalid Login Credentials
+  /accounts/info:
+    get:
+      tags:
+        - Account
+      operationId: userinfo
+      description: アカウントにログインします
+      summary: Login to an account
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  login:
+                    type: string
+                    required:
+                      - login
+        '401':
+          description: Invalid Login Credentials
+      security:
+        - bearerAuth: []
+  /pass:
+    post:
+      tags:
+        - Pass
+      operationId: generatePass
+      description: 乗客のパスを生成します
+      summary: Generate a pass for a passenger
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+      responses:
+        '200':
+          description: Pass generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to create passenger
+      security:
+        - bearerAuth: []
+  /pass/passenger:
+    post:
+      tags:
+        - Pass
+      operationId: generatePassengerPass
+      description: 乗客のPNRを名前ベースで検索
+      summary: Search for a passenger PNR by name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                middleName:
+                  type: string
+              required:
+                - firstName
+      responses:
+        '200':
+          description: Passenger found successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PassengerFlightRecord'
+        '500':
+          description: Failed to find passenger

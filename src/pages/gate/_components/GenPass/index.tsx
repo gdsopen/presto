@@ -1,14 +1,12 @@
 import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../../../styled-system/css";
 import {
   type PassengerFlightRecordResponse,
   getPassBaseData,
-} from "../../../../scripts/api";
-
-const authTokenAtom = atomWithStorage("authToken", "");
+} from "../../../../api/client";
+import { authTokenAtom } from "../../../../lib/Atoms";
 
 export const GenPass: React.FC = () => {
   const [token, _setToken] = useAtom(authTokenAtom);

@@ -1,10 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import * as PDF417 from "pdf417-generator";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getTicketFullData } from "../../../../scripts/api";
+import { getTicketFullData } from "../../../../api/client";
+import { authTokenAtom, printerAtom } from "../../../../lib/Atoms";
 
 type TicketData = {
   flightDate: string;
@@ -24,13 +24,6 @@ type TicketData = {
   boardingTime?: string;
   boardingGroup?: string;
 };
-
-const authTokenAtom = atomWithStorage("authToken", "");
-const printerAtom = atomWithStorage("selectedPrinter", {
-  name: "",
-  vendor_id: 0,
-  device_id: 0,
-});
 
 export const CreatePass: React.FC = () => {
   const [selectedPrinter, _setSelectedPrinter] = useAtom(printerAtom);
@@ -58,10 +51,10 @@ export const CreatePass: React.FC = () => {
           compartment === "F"
             ? "FIRST CLASS"
             : compartment === "C"
-            ? "BUSINESS CLASS"
-            : compartment === "P"
-            ? "PREMIUM ECONOMY"
-            : "ECONOMY CLASS",
+              ? "BUSINESS CLASS"
+              : compartment === "P"
+                ? "PREMIUM ECONOMY"
+                : "ECONOMY CLASS",
         firstName: data.data?.pnr?.firstName || "",
         lastName: data.data?.pnr?.lastName || "",
         middleName: data.data?.pnr?.middleName || "",
@@ -143,7 +136,7 @@ export const CreatePass: React.FC = () => {
       ctx.fillText(
         `${ticketData.firstName} ${ticketData.lastName} ${ticketData.middleName} ${ticketData.nameSuffix}`,
         -500,
-        -175
+        -175,
       );
       ctx.fillText(ticketData.flightDate, -180, -250);
       ctx.fillText(ticketData.compartment, -180, -210);
