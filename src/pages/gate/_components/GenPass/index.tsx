@@ -13,7 +13,7 @@ export const GenPass: React.FC = () => {
   const [flights, setFlights] = useState<PassengerFlightRecordResponse[]>([]);
 
   const pass = async (id: string) => {
-    await getPassBaseData(id, token).then((res) => {
+    await getPassBaseData(id, token.token).then((res) => {
       setFlights(res.data as PassengerFlightRecordResponse[]);
     });
   };

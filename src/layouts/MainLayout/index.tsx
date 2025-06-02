@@ -39,6 +39,7 @@ export const MainLayout: React.FC<{
         className={css({
           maxWidth: "1200px",
           margin: "16px auto",
+          paddingX: "16px",
         })}
       >
         {children}

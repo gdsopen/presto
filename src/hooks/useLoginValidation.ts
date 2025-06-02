@@ -10,8 +10,9 @@ type LoginValidationResult = {
 };
 
 type UserData = {
-  email: string;
+  login: string;
   name: string;
+  role: string;
 };
 
 const COOKIE_NAME = "admin_token";
@@ -24,7 +25,17 @@ const getInitialAuthState = (): AuthToken => {
   };
 };
 
-export const useLoginValidation = () => {
+export const useLoginValidation = (): {
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  user: UserData | null;
+  isInitialized: boolean;
+  validateLogin: (
+    id: string,
+    password: string,
+  ) => Promise<LoginValidationResult>;
+  logout: () => void;
+} => {
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useAtom(authTokenAtom);
   const [user, setUser] = useState<UserData | null>(null);
@@ -90,8 +101,9 @@ export const useLoginValidation = () => {
           const userData = await userId(cookieToken);
           if (isMounted && userData.data?.login) {
             setUser({
-              email: userData.data.login,
-              name: userData.data.login,
+              login: userData.data.login,
+              name: userData.data.name || "",
+              role: userData.data.role || "",
             });
             setToken({ token: cookieToken, loading: false });
             setIsAuthenticated(true);

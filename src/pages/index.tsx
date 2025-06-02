@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { css } from "../../styled-system/css";
-import { useLoginValidation } from "../hooks/useLoginValidation";
+import { useAuth, useLoginValidation } from "../hooks/useLoginValidation";
 import { LoginLayout } from "../layouts/LoginLayout";
 import { LoginForm } from "./_components/LoginForm";
 import { LoginHeader } from "./_components/LoginLeftHero";
@@ -12,6 +13,7 @@ type LoginFormData = {
 
 function App() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const { validateLogin, isLoading } = useLoginValidation();
 
   const onSubmit = async (data: LoginFormData) => {
@@ -23,6 +25,12 @@ function App() {
       console.error(result.error);
     }
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <LoginLayout>

@@ -620,7 +620,10 @@ export interface operations {
         };
         content: {
           "application/json": {
-            login?: string;
+            login: string;
+            name: string;
+            role: string;
+            terminal: string;
           };
         };
       };

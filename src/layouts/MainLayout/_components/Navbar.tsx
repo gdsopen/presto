@@ -4,6 +4,7 @@ import {
   IconUserSquareRounded,
 } from "@tabler/icons-react";
 import { useAtom } from "jotai";
+import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { css } from "../../../../styled-system/css";
 import { userId } from "../../../api/client";
@@ -11,17 +12,27 @@ import { Button } from "../../../components/Button";
 import { MenuItem, PopoverMenu } from "../../../components/PopoverMenu";
 import { PrinterSettings } from "../../../components/PrinterSettings";
 import { authTokenAtom } from "../../../lib/Atoms";
+
 export const Navbar: React.FC = () => {
+  const contents: React.ReactNode[] = [
+    <a key="home" href="/home">
+      <Button>Home</Button>
+    </a>,
+    <Button key="welcome" isDisabled>
+      Welcome
+    </Button>,
+    <PrinterSettings key="printer-settings" />,
+  ];
+
   return (
     <div
       className={css({
-        borderBottom: "1px solid #ccc",
         padding: "20px 10px",
         width: "100%",
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
-        background: "#f3f3f3",
+        background: "#f5f5f5",
         justifyContent: "space-between",
       })}
     >
@@ -30,9 +41,7 @@ export const Navbar: React.FC = () => {
           Presto/Duties
         </h1>
         <div className={css({ display: "flex", gap: "10px" })}>
-          <Button>Welcome</Button>
-          <Button isDisabled>Welcome</Button>
-          <PrinterSettings />
+          {contents.map((content) => content)}
         </div>
       </div>
       <PopoverMenu menuItem={<MenuItems />}>
@@ -47,7 +56,7 @@ export const Navbar: React.FC = () => {
             textAlign: "left",
             transition: "background 0.2s",
             _hover: {
-              background: "#eee",
+              background: "#fff6db",
             },
           })}
         >
@@ -66,7 +75,7 @@ const MenuItems: React.FC = () => {
     const fetchUserData = async () => {
       try {
         const data = await userId(token.token);
-        setUserData(data.data?.login || "");
+        setUserData(data.data?.name || "");
       } catch (error) {
         console.error(error);
         setUserData("");
@@ -79,6 +88,7 @@ const MenuItems: React.FC = () => {
 
   const logout = () => {
     setToken({ token: "", loading: false });
+    Cookies.remove("admin_token");
     window.location.href = "/";
   };
 
