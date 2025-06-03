@@ -2,7 +2,7 @@ import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { login, userId } from "../api/client";
-import { type AuthToken, authTokenAtom } from "../lib/Atoms";
+import { authTokenAtom } from "../lib/Atoms";
 
 type LoginValidationResult = {
   isValid: boolean;
@@ -16,14 +16,6 @@ type UserData = {
 };
 
 const COOKIE_NAME = "admin_token";
-
-const getInitialAuthState = (): AuthToken => {
-  const cookieToken = Cookies.get(COOKIE_NAME);
-  return {
-    token: cookieToken || "",
-    loading: false,
-  };
-};
 
 export const useLoginValidation = (): {
   isLoading: boolean;

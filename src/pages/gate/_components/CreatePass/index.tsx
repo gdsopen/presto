@@ -37,7 +37,7 @@ export const CreatePass: React.FC = () => {
   };
 
   const setFlightData = (id: string) => {
-    getTicketFullData(id, token).then((data) => {
+    getTicketFullData(id, token.token).then((data) => {
       const compartment = data.data?.flight?.compartmentCode || "";
       setTitcketData({
         flightDate: new Date(data.data?.flight?.departureDate || "")
