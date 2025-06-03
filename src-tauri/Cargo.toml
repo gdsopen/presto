@@ -24,6 +24,5 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 
 escpos = { version = "0.15.2", features = ["graphics", "native_usb"] }
-rusb = "0.9"
 encoding_rs= {version="0.8.35"}
 nusb = "0.1.14"
