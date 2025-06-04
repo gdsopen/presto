@@ -3,25 +3,23 @@ import {
   IconTriangleInvertedFilled,
   IconUserSquareRounded,
 } from "@tabler/icons-react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
 import { css } from "../../../../styled-system/css";
-import { userId } from "../../../api/client";
 import { Button } from "../../../components/Button";
 import { MenuItem, PopoverMenu } from "../../../components/PopoverMenu";
 import { PrinterSettings } from "../../../components/PrinterSettings";
-import { authTokenAtom } from "../../../lib/Atoms";
+import { authTokenAtom, userDataAtom } from "../../../lib/Atoms";
 
 export const Navbar: React.FC = () => {
   const contents: React.ReactNode[] = [
     <a key="home" href="/home">
       <Button>Home</Button>
     </a>,
-    <Button key="welcome" isDisabled>
-      Welcome
-    </Button>,
     <PrinterSettings key="printer-settings" />,
+    <a key="accounts" href="/users">
+      <Button>Users</Button>
+    </a>,
   ];
 
   return (
@@ -69,22 +67,8 @@ export const Navbar: React.FC = () => {
 };
 
 const MenuItems: React.FC = () => {
-  const [userData, setUserData] = useState<string>("");
-  const [token, setToken] = useAtom(authTokenAtom);
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const data = await userId(token.token);
-        setUserData(data.data?.name || "");
-      } catch (error) {
-        console.error(error);
-        setUserData("");
-      }
-    };
-    if (token.token) {
-      fetchUserData();
-    }
-  }, [token.token]);
+  const userData = useAtomValue(userDataAtom);
+  const [_token, setToken] = useAtom(authTokenAtom);
 
   const logout = () => {
     setToken({ token: "", loading: false });
@@ -97,7 +81,7 @@ const MenuItems: React.FC = () => {
       <a href="/users">
         <MenuItem>
           User: <br />
-          {userData}
+          {userData?.name || ""}
         </MenuItem>
       </a>
       <MenuItem onClick={logout}>Logout</MenuItem>

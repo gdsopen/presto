@@ -22,3 +22,12 @@ export const authTokenAtom = atom<AuthToken>({
   token: "",
   loading: false,
 });
+
+export type UserData = {
+  login: string;
+  name: string;
+  role: string;
+  terminal: string;
+};
+
+export const userDataAtom = atom<UserData | null>(null);

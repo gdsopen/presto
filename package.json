@@ -14,7 +14,8 @@
     "fix": "biome check --write .",
     "type-check": "tsc --noEmit",
     "tauri": "tauri",
-    "prepare": "panda codegen"
+    "prepare": "panda codegen",
+    "gen:api": "npx openapi-typescript http://localhost:8787/doc -o ./src/api/generated/types.ts"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

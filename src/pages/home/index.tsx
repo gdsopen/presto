@@ -11,7 +11,7 @@ function App() {
           color: "#333",
         })}
       >
-        Boarding Pass
+        Welcome
       </h1>
     </MainLayout>
   );

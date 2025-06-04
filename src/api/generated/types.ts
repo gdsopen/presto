@@ -4,298 +4,805 @@
  */
 
 export interface paths {
-  "/pnr/passenger": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/accounts/new": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateUser"];
+                };
+            };
+            responses: {
+                /** @description ユーザー作成成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description ユーザー作成失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get a passenger record
-     * @description 乗客レコードを取得します
-     */
-    get: operations["getPassenger"];
-    /**
-     * Update an existing passenger record
-     * @description 既存の乗客レコードを更新します
-     */
-    put: operations["updatePassenger"];
-    /**
-     * Create a new passenger record
-     * @description 新しい乗客レコードを作成します
-     */
-    post: operations["createPassenger"];
-    /**
-     * Delete a passenger record
-     * @description 乗客レコードを削除します
-     */
-    delete: operations["deletePassenger"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/pnr/passenger/search": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/accounts/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Login"];
+                };
+            };
+            responses: {
+                /** @description ログイン成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["LoginResponse"];
+                    };
+                };
+                /** @description 認証失敗 */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Search for a passenger record
-     * @description 乗客レコードを検索します
-     */
-    post: operations["searchPassenger"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/pnr/flight": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/accounts/info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description ユーザー情報取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description ユーザーが見つかりません */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Get a flight record
-     * @description フライトレコードを取得します
-     */
-    get: operations["getFlight"];
-    /**
-     * Update an existing flight record
-     * @description 既存のフライトレコードを更新します
-     */
-    put: operations["updateFlight"];
-    /**
-     * Create a new flight record
-     * @description 新しいフライトレコードを作成します
-     */
-    post: operations["createFlight"];
-    /**
-     * Delete a flight record
-     * @description フライトレコードを削除します
-     */
-    delete: operations["deleteFlight"];
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/accounts/new": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/pnr/passenger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Id"];
+                };
+            };
+            responses: {
+                /** @description 乗客情報取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerNameRecord"];
+                    };
+                };
+                /** @description 乗客情報取得失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["PassengerNameRecord"];
+                };
+            };
+            responses: {
+                /** @description 乗客情報更新成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NameResponse"];
+                    };
+                };
+                /** @description 乗客情報更新失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["PassengerNameRecord"];
+                };
+            };
+            responses: {
+                /** @description 乗客情報作成成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NameResponse"];
+                    };
+                };
+                /** @description PNRが既に存在します */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 乗客情報作成失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Id"];
+                };
+            };
+            responses: {
+                /** @description 乗客情報削除成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["NameResponse"];
+                    };
+                };
+                /** @description 乗客情報削除失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Create a new account
-     * @description 新しいアカウントを作成します
-     */
-    post: operations["createAccount"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/accounts/login": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/pnr/passenger/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Search"];
+                };
+            };
+            responses: {
+                /** @description 乗客検索成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerNameRecord"];
+                    };
+                };
+                /** @description 乗客検索失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Login to an account
-     * @description アカウントにログインします
-     */
-    post: operations["login"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/accounts/info": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/pnr/flight": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description フライト情報一覧取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerFlightRecord"][];
+                    };
+                };
+            };
+        };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["PassengerFlightRecord"];
+                };
+            };
+            responses: {
+                /** @description フライト情報更新成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerFlightRecord"];
+                    };
+                };
+                /** @description フライト情報更新失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["PassengerFlightRecord"];
+                };
+            };
+            responses: {
+                /** @description フライト情報作成成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerNameRecord"];
+                    };
+                };
+                /** @description フライト情報作成失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["Id"];
+                };
+            };
+            responses: {
+                /** @description フライト情報削除成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PassengerFlightRecord"];
+                    };
+                };
+                /** @description フライト情報削除失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    /**
-     * Login to an account
-     * @description アカウントにログインします
-     */
-    get: operations["userinfo"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/pass": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/pass/passenger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        firstName: string;
+                        lastName?: string;
+                        middleName?: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 搭乗券情報取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            pnrId: string;
+                            flightNumber: string;
+                            departureDate: string;
+                            departureTime: string;
+                            arrivalDate: string;
+                            arrivalTime: string;
+                            departureAirport: string;
+                            arrivalAirport: string;
+                            seatNumber: string;
+                            status: string;
+                        }[];
+                    };
+                };
+                /** @description 搭乗券情報取得失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Generate a pass for a passenger
-     * @description 乗客のパスを生成します
-     */
-    post: operations["generatePass"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/pass/passenger": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/pass": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        id: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description 搭乗券情報取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            pnrId: string;
+                            flightNumber: string;
+                            departureDate: string;
+                            departureTime: string;
+                            arrivalDate: string;
+                            arrivalTime: string;
+                            departureAirport: string;
+                            arrivalAirport: string;
+                            seatNumber: string;
+                            status: string;
+                        }[];
+                    };
+                };
+                /** @description 搭乗券情報取得失敗 */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get?: never;
-    put?: never;
-    /**
-     * Search for a passenger PNR by name
-     * @description 乗客のPNRを名前ベースで検索
-     */
-    post: operations["generatePassengerPass"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
+    "/admin/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUser"];
+                };
+            };
+            responses: {
+                /** @description ユーザー情報更新成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description ユーザーが見つかりません */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/update/substitute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateOtherUser"];
+                };
+            };
+            responses: {
+                /** @description ユーザー情報更新成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description ユーザーが見つかりません */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/users": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description ユーザー一覧取得成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"][];
+                    };
+                };
+                /** @description 認証エラー */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 権限エラー */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/signup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateUserFromAdmin"];
+                };
+            };
+            responses: {
+                /** @description ユーザー登録成功 */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["User"];
+                    };
+                };
+                /** @description 認証エラー */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description 権限エラー */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    PassengerNameRecord: {
-      id?: string;
-      pnrId?: string;
-      firstName?: string;
-      lastName?: string;
-      middleName?: string;
-      nameTitle?: string;
-      passengerDescription?: number;
-      checkInSource?: string;
-      boardingPassIssuanceSource?: string;
-      issuanceDate?: string;
-      documentType?: string;
-      boardingPassIssuerDesignator?: string;
-      baggageTagNumber?: string;
-      firstBaggageTagNumber?: string;
-      secondBaggageTagNumber?: string;
-      securityDataType?: string;
-      securityData?: string;
-    };
-    PassengerFlightRecord: {
-      id?: string;
-      pnrId?: string;
-      departurePort?: string;
-      arrivalPort?: string;
-      operatingCarrier?: string;
-      flightNumber?: number;
-      departureDate?: string;
-      compartmentCode?: string;
-      seatNumber?: string;
-      checkInSequenceNumber?: number;
-      remarks?: string;
-    };
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
-}
-export type $defs = Record<string, never>;
-export interface operations {
-  getPassenger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          id?: string;
+    schemas: {
+        User: {
+            id: string;
+            login: string;
+            name: string;
+            role: string;
+            terminal?: string;
         };
-      };
-    };
-    responses: {
-      /** @description Passenger found successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        CreateUser: {
+            login: string;
+            password: string;
+            name: string;
         };
-        content: {
-          "application/json": components["schemas"]["PassengerNameRecord"];
+        LoginResponse: {
+            token: string;
         };
-      };
-      /** @description Failed to find passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        Login: {
+            login: string;
+            password: string;
         };
-        content?: never;
-      };
-    };
-  };
-  updatePassenger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PassengerNameRecord"];
-      };
-    };
-    responses: {
-      /** @description Passenger updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        NameResponse: {
+            name: string;
         };
-        content: {
-          "application/json": {
-            pnrId?: string;
-            firstName?: string;
-            lastName?: string;
+        PassengerNameRecord: {
+            pnrId: string;
+            firstName: string;
+            lastName: string;
             middleName?: string;
-            nameTitle?: string;
-            passengerDescription?: number;
+            nameTitle: string;
+            passengerDescription: number;
             checkInSource?: string;
             boardingPassIssuanceSource?: string;
             issuanceDate?: string;
-            documentType?: string;
+            documentType: string;
             boardingPassIssuerDesignator?: string;
             baggageTagNumber?: string;
             firstBaggageTagNumber?: string;
@@ -303,405 +810,51 @@ export interface operations {
             securityDataType?: string;
             securityData?: string;
             passengerUserId?: string;
-            email?: string;
-          };
         };
-      };
-      /** @description Failed to update passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        Id: {
+            id: string;
         };
-        content?: never;
-      };
-    };
-  };
-  createPassenger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PassengerNameRecord"];
-      };
-    };
-    responses: {
-      /** @description Passenger created successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
+        Search: {
+            firstName: string;
+            lastName?: string;
         };
-        content: {
-          "application/json": components["schemas"]["PassengerNameRecord"];
+        PassengerFlightRecord: {
+            pnrId: string;
+            departurePort: string;
+            arrivalPort: string;
+            operatingCarrier: string;
+            flightNumber: number;
+            departureDate: string;
+            compartmentCode: string;
+            seatNumber?: string;
+            checkInSequenceNumber?: number;
+            passengerUserId?: string;
         };
-      };
-      /** @description Failed to create passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
+        UpdateUser: {
+            currentPassword: string;
+            newPassword?: string;
+            name?: string;
+            role?: string;
         };
-        content?: never;
-      };
-    };
-  };
-  deletePassenger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          id?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Passenger deleted successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerNameRecord"];
-        };
-      };
-      /** @description Failed to delete passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  searchPassenger: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          firstName?: string;
-          lastName?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Passenger found successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerNameRecord"];
-        };
-      };
-      /** @description Failed to find passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  getFlight: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Flight found successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"][];
-        };
-      };
-      /** @description Failed to find flight record */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  updateFlight: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PassengerFlightRecord"];
-      };
-    };
-    responses: {
-      /** @description Flight updated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"];
-        };
-      };
-      /** @description Failed to update flight record */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  createFlight: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PassengerFlightRecord"];
-      };
-    };
-    responses: {
-      /** @description Flight created successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"];
-        };
-      };
-      /** @description Failed to create flight record */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  deleteFlight: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          id?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Flight deleted successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"];
-        };
-      };
-      /** @description Failed to delete flight record */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  createAccount: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          login?: string;
-          password?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Account created successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-      /** @description Failed to create user */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  login: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          login?: string;
-          password?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Login successful */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
-            token?: string;
-          };
-        };
-      };
-      /** @description Invalid Login Credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  userinfo: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Login successful */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": {
+        UpdateOtherUser: {
+            currentPassword: string;
             login: string;
+            newPassword?: string;
+            name?: string;
+            role?: string;
+        };
+        CreateUserFromAdmin: {
+            login: string;
+            password: string;
             name: string;
             role: string;
-            terminal: string;
-          };
         };
-      };
-      /** @description Invalid Login Credentials */
-      401: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
     };
-  };
-  generatePass: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          id?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Pass generated successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"];
-        };
-      };
-      /** @description Failed to create passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
-  generatePassengerPass: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        "application/json": {
-          firstName: string;
-          lastName?: string;
-          middleName?: string;
-        };
-      };
-    };
-    responses: {
-      /** @description Passenger found successfully */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["PassengerFlightRecord"][];
-        };
-      };
-      /** @description Failed to find passenger */
-      500: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content?: never;
-      };
-    };
-  };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
+export type $defs = Record<string, never>;
+export type operations = Record<string, never>;

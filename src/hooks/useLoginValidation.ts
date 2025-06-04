@@ -2,17 +2,11 @@ import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { login, userId } from "../api/client";
-import { authTokenAtom } from "../lib/Atoms";
+import { authTokenAtom, userDataAtom, type UserData } from "../lib/Atoms";
 
 type LoginValidationResult = {
   isValid: boolean;
   error: string | null;
-};
-
-type UserData = {
-  login: string;
-  name: string;
-  role: string;
 };
 
 const COOKIE_NAME = "admin_token";
@@ -24,19 +18,19 @@ export const useLoginValidation = (): {
   isInitialized: boolean;
   validateLogin: (
     id: string,
-    password: string,
+    password: string
   ) => Promise<LoginValidationResult>;
   logout: () => void;
 } => {
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useAtom(authTokenAtom);
-  const [user, setUser] = useState<UserData | null>(null);
+  const [userData, setUserData] = useAtom(userDataAtom);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const validateLogin = async (
     id: string,
-    password: string,
+    password: string
   ): Promise<LoginValidationResult> => {
     setIsLoading(true);
     try {
@@ -79,55 +73,34 @@ export const useLoginValidation = (): {
   const logout = () => {
     Cookies.remove(COOKIE_NAME);
     setToken({ token: "", loading: false });
-    setUser(null);
+    setUserData(null);
     setIsAuthenticated(false);
+    window.location.href = "/";
   };
 
   useEffect(() => {
-    let isMounted = true;
+    const fetchUserData = async () => {
+      if (!token.token) {
+        setUserData(null);
+        setIsInitialized(true);
+        return;
+      }
 
-    const fetchUser = async () => {
       try {
-        const cookieToken = Cookies.get(COOKIE_NAME);
-        if (cookieToken) {
-          const userData = await userId(cookieToken);
-          if (isMounted && userData.data?.login) {
-            setUser({
-              login: userData.data.login,
-              name: userData.data.name || "",
-              role: userData.data.role || "",
-            });
-            setToken({ token: cookieToken, loading: false });
-            setIsAuthenticated(true);
-          }
-        } else if (isMounted) {
-          setUser(null);
-          setToken({ token: "", loading: false });
-          setIsAuthenticated(false);
+        const response = await userId(token.token);
+        if (response.data) {
+          setUserData(response.data as UserData);
         }
       } catch (error) {
-        console.error(error);
-        if (isMounted) {
-          setUser(null);
-          setToken({ token: "", loading: false });
-          setIsAuthenticated(false);
-          Cookies.remove(COOKIE_NAME);
-        }
+        console.error("Failed to fetch user data:", error);
+        setUserData(null);
       } finally {
-        if (isMounted) {
-          setIsInitialized(true);
-        }
+        setIsInitialized(true);
       }
     };
 
-    if (!isInitialized) {
-      fetchUser();
-    }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isInitialized, setToken]);
+    fetchUserData();
+  }, [token.token, setUserData]);
 
   // Cookieの変更を監視
   useEffect(() => {
@@ -140,7 +113,7 @@ export const useLoginValidation = (): {
   return {
     isLoading,
     isAuthenticated,
-    user,
+    user: userData,
     validateLogin,
     logout,
     isInitialized,
