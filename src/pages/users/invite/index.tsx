@@ -23,7 +23,7 @@ function App() {
   const token = useAtomValue(authTokenAtom);
 
   const onSubmit = async (
-    data: components["schemas"]["CreateUserFromAdmin"]
+    data: components["schemas"]["CreateUserFromAdmin"],
   ) => {
     const res = await signUp(token.token, data);
     if (res.error) {
