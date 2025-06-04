@@ -1,13 +1,13 @@
+import { useAtomValue } from "jotai";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../styled-system/css";
+import { updateUser } from "../../api/client";
+import type { components } from "../../api/generated/types";
+import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useLoginValidation";
 import { MainLayout } from "../../layouts/MainLayout";
-import type { components } from "../../api/generated/types";
-import { useEffect } from "react";
-import { updateUser } from "../../api/client";
 import { authTokenAtom } from "../../lib/Atoms";
-import { useAtomValue } from "jotai";
-import { Button } from "../../components/Button";
 
 function App() {
   const { user } = useAuth();

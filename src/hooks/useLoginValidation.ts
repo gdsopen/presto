@@ -2,7 +2,7 @@ import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import { login, userId } from "../api/client";
-import { authTokenAtom, userDataAtom, type UserData } from "../lib/Atoms";
+import { type UserData, authTokenAtom, userDataAtom } from "../lib/Atoms";
 
 type LoginValidationResult = {
   isValid: boolean;
@@ -18,7 +18,7 @@ export const useLoginValidation = (): {
   isInitialized: boolean;
   validateLogin: (
     id: string,
-    password: string
+    password: string,
   ) => Promise<LoginValidationResult>;
   logout: () => void;
 } => {
@@ -30,7 +30,7 @@ export const useLoginValidation = (): {
 
   const validateLogin = async (
     id: string,
-    password: string
+    password: string,
   ): Promise<LoginValidationResult> => {
     setIsLoading(true);
     try {

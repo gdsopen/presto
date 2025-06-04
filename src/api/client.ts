@@ -51,7 +51,7 @@ export const getAllUsers = async (token: string) => {
 
 export const updateUser = async (
   token: string,
-  data: components["schemas"]["UpdateUser"]
+  data: components["schemas"]["UpdateUser"],
 ) => {
   try {
     const res = await client.PUT("/admin/update", {
@@ -69,7 +69,7 @@ export const updateUser = async (
 
 export const updateOtherUser = async (
   token: string,
-  data: components["schemas"]["UpdateOtherUser"]
+  data: components["schemas"]["UpdateOtherUser"],
 ) => {
   try {
     const res = await client.PUT("/admin/update", {
@@ -87,7 +87,7 @@ export const updateOtherUser = async (
 
 export const signUp = async (
   token: string,
-  data: components["schemas"]["CreateUserFromAdmin"]
+  data: components["schemas"]["CreateUserFromAdmin"],
 ) => {
   try {
     const res = await client.POST("/admin/signup", {

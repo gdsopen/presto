@@ -1,12 +1,12 @@
+import { useAtomValue } from "jotai";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../../styled-system/css";
+import { signUp } from "../../../api/client";
+import type { components } from "../../../api/generated/types";
 import { useAuth } from "../../../hooks/useLoginValidation";
 import { MainLayout } from "../../../layouts/MainLayout";
-import type { components } from "../../../api/generated/types";
-import { useEffect, useState } from "react";
 import { authTokenAtom } from "../../../lib/Atoms";
-import { useAtomValue } from "jotai";
-import { signUp } from "../../../api/client";
 
 function App() {
   const { user } = useAuth();
@@ -23,7 +23,7 @@ function App() {
   const token = useAtomValue(authTokenAtom);
 
   const onSubmit = async (
-    data: components["schemas"]["CreateUserFromAdmin"]
+    data: components["schemas"]["CreateUserFromAdmin"],
   ) => {
     const res = await signUp(token.token, data);
     if (res.error) {
