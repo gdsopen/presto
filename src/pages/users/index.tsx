@@ -1,19 +1,14 @@
-import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../styled-system/css";
-import { updateUser } from "../../api/client";
 import type { components } from "../../api/generated/types";
 import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useLoginValidation";
 import { MainLayout } from "../../layouts/MainLayout";
-import { authTokenAtom } from "../../lib/Atoms";
 
 function App() {
   const { user } = useAuth();
-  const { register, handleSubmit, reset } = useForm<
-    components["schemas"]["UpdateUser"]
-  >({
+  const { reset } = useForm<components["schemas"]["UpdateUser"]>({
     defaultValues: {
       name: user?.name || "",
       currentPassword: "",
@@ -30,19 +25,6 @@ function App() {
       });
     }
   }, [user, reset]);
-
-  const token = useAtomValue(authTokenAtom);
-
-  const onSubmit = async (data: components["schemas"]["UpdateUser"]) => {
-    const res = await updateUser(token.token, data);
-    if (res.error) {
-      alert(res.error);
-    } else {
-      alert("User updated successfully");
-    }
-    window.location.reload();
-    reset();
-  };
 
   return (
     <MainLayout>
