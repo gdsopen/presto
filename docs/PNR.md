@@ -26,8 +26,9 @@ The shape is intentionally simplified to keep the demo small. A real implementat
 
 ## Pages
 
-- **PNRs list** – shows stored PNRs and links to create a new record.
+- **PNRs list** – shows stored PNRs and links to create or search records.
 - **New PNR** – form to enter record locator, passengers and flight segments.
+- **Search PNR** – filter stored PNRs by record locator.
 
 The pages live under `src/pages/pnrs` and are automatically registered via `@generouted/react-router`.
 

@@ -1,35 +1,16 @@
+import { useState } from "react";
 import { useAtomValue } from "jotai";
-import { css } from "../../../styled-system/css";
-import { MainLayout } from "../../layouts/MainLayout";
-import { pnrsAtom } from "../../lib/Atoms";
+import { css } from "../../../../styled-system/css";
+import { MainLayout } from "../../../layouts/MainLayout";
+import { pnrsAtom } from "../../../lib/Atoms";
 
 function App() {
   const pnrs = useAtomValue(pnrsAtom);
+  const [query, setQuery] = useState("");
 
-        <div
-          className={css({
-            display: "flex",
-            gap: "10px",
-            marginBottom: "10px",
-          })}
-        >
-          <a href="/pnrs/search">
-            <button
-              type="button"
-              className={css({
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                backgroundColor: "#60abe0",
-                color: "#fff",
-                cursor: "pointer",
-              })}
-            >
-              Search PNR
-            </button>
-          </a>
-    window.location.href = `/pnrs/details?id=${id}`;
-  };
+  const filtered = pnrs.filter((p) =>
+    p.recordLocator.toLowerCase().includes(query.toLowerCase()),
+  );
 
   return (
     <MainLayout>
@@ -41,27 +22,25 @@ function App() {
             color: "#333",
           })}
         >
-          PNRs
+          Search PNRs
         </h1>
         <div className={css({ marginBottom: "10px" })}>
-          <a href="/pnrs/new">
-            <button
-              type="button"
-              className={css({
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                backgroundColor: "#60abe0",
-                color: "#fff",
-                cursor: "pointer",
-              })}
-            >
-              New PNR
-            </button>
-          </a>
+          <input
+            type="text"
+            placeholder="Record Locator"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className={css({
+              width: "100%",
+              maxWidth: "300px",
+              border: "1px solid #ccc",
+              borderRadius: "5px",
+              padding: "8px",
+            })}
+          />
         </div>
-        {pnrs.length === 0 ? (
-          <p>No PNRs yet.</p>
+        {filtered.length === 0 ? (
+          <p>No matching PNRs.</p>
         ) : (
           <table className={css({ width: "100%", borderCollapse: "collapse" })}>
             <thead>
@@ -105,23 +84,8 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {pnrs.map((p) => (
-                <tr
-                  key={p.id}
-                  onClick={() => handleRowClick(p.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleRowClick(p.id);
-                    }
-                  }}
-                  tabIndex={0}
-                  className={css({
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  })}
-                >
+              {filtered.map((p) => (
+                <tr key={p.id}>
                   <td
                     className={css({
                       padding: "8px",
