@@ -6,6 +6,10 @@ import { pnrsAtom } from "../../lib/Atoms";
 function App() {
   const pnrs = useAtomValue(pnrsAtom);
 
+  const handleRowClick = (id: string) => {
+    window.location.href = `/pnrs/details?id=${id}`;
+  };
+
   return (
     <MainLayout>
       <div>
@@ -81,7 +85,22 @@ function App() {
             </thead>
             <tbody>
               {pnrs.map((p) => (
-                <tr key={p.id}>
+                <tr
+                  key={p.id}
+                  onClick={() => handleRowClick(p.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleRowClick(p.id);
+                    }
+                  }}
+                  tabIndex={0}
+                  className={css({
+                    cursor: "pointer",
+                    "&:hover": {
+                      backgroundColor: "#f5f5f5",
+                    },
+                  })}
+                >
                   <td
                     className={css({
                       padding: "8px",
