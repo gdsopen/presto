@@ -4,13 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { css } from "../../../../styled-system/css";
 import { MainLayout } from "../../../layouts/MainLayout";
 import { pnrsAtom, type Pnr } from "../../../lib/Atoms";
+import { generateRecordLocator } from "../../../lib/utils";
 
 function App() {
   const [pnrs, setPnrs] = useAtom(pnrsAtom);
   const navigate = useNavigate();
   const { register, handleSubmit, control, reset } = useForm<Omit<Pnr, "id">>({
     defaultValues: {
-      recordLocator: "",
+      recordLocator: generateRecordLocator(),
       passengers: [{ name: "", rph: "", ffp: "" }],
       flights: [{ flightNumber: "", from: "", to: "", date: "", seat: "" }],
       note: "",
@@ -63,6 +64,7 @@ function App() {
               border: "1px solid #ccc",
               borderRadius: "5px",
               padding: "10px",
+              fontFamily: "monospace",
             })}
           />
         </div>
