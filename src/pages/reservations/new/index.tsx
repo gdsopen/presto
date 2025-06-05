@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../../../styled-system/css";
 import { MainLayout } from "../../../layouts/MainLayout";
 import { type Reservation, reservationsAtom } from "../../../lib/Atoms";
@@ -21,7 +21,7 @@ function App() {
   const onSubmit = (data: Omit<Reservation, "id">) => {
     setReservations([...reservations, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate("/reservations");
+    navigate({ to: "/reservations" });
   };
 
   return (

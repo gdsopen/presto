@@ -1,6 +1,6 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 import { type Pnr, pnrsAtom } from "../../lib/Atoms";
@@ -31,7 +31,7 @@ function App() {
   const onSubmit = (data: Omit<Pnr, "id">) => {
     setPnrs([...pnrs, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate("/pnrs");
+    navigate({ to: "/pnrs" });
   };
 
   return (

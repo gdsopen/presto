@@ -1,5 +1,5 @@
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../styled-system/css";
 import { useAuth, useLoginValidation } from "../hooks/useLoginValidation";
 import { LoginLayout } from "../layouts/LoginLayout";
@@ -20,7 +20,7 @@ function App() {
     const result = await validateLogin(data.id, data.password);
 
     if (result.isValid) {
-      navigate("/home");
+      navigate({ to: "/home" });
     } else {
       console.error(result.error);
     }
@@ -28,7 +28,7 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      navigate({ to: "/home" });
     }
   }, [isAuthenticated, navigate]);
 

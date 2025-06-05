@@ -18,6 +18,7 @@
     "gen:api": "npx openapi-typescript http://aeromate-backend.fuminori.workers.dev/doc -o ./src/api/generated/types.ts"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.120.15",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "@types/js-cookie": "^3.0.6",
@@ -29,7 +30,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@generouted/react-router": "^1.20.0",
     "@pandacss/dev": "^0.53.7",
     "@tabler/icons-react": "^3.33.0",
     "@tauri-apps/cli": "^2",
@@ -43,7 +43,6 @@
     "openapi-typescript": "^7.8.0",
     "pdf417-generator": "^1.0.5",
     "react-hook-form": "^7.56.4",
-    "react-router-dom": "^7.6.1",
     "typescript": "~5.6.2",
     "vite": "^6.0.3"
   },
