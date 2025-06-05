@@ -31,3 +31,17 @@ export type UserData = {
 };
 
 export const userDataAtom = atom<UserData | null>(null);
+
+export type Reservation = {
+  id: string;
+  name: string;
+  date: string;
+  time: string;
+  people: number;
+  note: string;
+};
+
+export const reservationsAtom = atomWithStorage<Reservation[]>(
+  "reservations",
+  [],
+);

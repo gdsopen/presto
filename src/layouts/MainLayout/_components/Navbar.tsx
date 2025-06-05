@@ -17,6 +17,9 @@ export const Navbar: React.FC = () => {
       <Button>Home</Button>
     </a>,
     <PrinterSettings key="printer-settings" />,
+    <a key="reservations" href="/reservations">
+      <Button>Reservations</Button>
+    </a>,
     <a key="accounts" href="/users">
       <Button>Users</Button>
     </a>,
