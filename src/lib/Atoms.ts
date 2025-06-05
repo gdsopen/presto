@@ -45,3 +45,20 @@ export const reservationsAtom = atomWithStorage<Reservation[]>(
   "reservations",
   [],
 );
+
+export type FlightReservation = {
+  id: string;
+  passengerName: string;
+  flightNumber: string;
+  departure: string;
+  arrival: string;
+  date: string;
+  time: string;
+  seat: string;
+  note: string;
+};
+
+export const flightReservationsAtom = atomWithStorage<FlightReservation[]>(
+  "flightReservations",
+  [],
+);

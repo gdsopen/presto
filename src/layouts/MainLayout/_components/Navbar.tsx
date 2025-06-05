@@ -20,6 +20,9 @@ export const Navbar: React.FC = () => {
     <a key="reservations" href="/reservations">
       <Button>Reservations</Button>
     </a>,
+    <a key="flight-reservations" href="/flight-reservations">
+      <Button>Flights</Button>
+    </a>,
     <a key="accounts" href="/users">
       <Button>Users</Button>
     </a>,
