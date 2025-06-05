@@ -21,7 +21,8 @@ function App() {
   const onSubmit = (data: Omit<Reservation, "id">) => {
     setReservations([...reservations, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate({ to: "/reservations" });
+    // biome-ignore lint/suspicious/noExplicitAny: router uses any
+    navigate({ to: "/reservations" as any });
   };
 
   return (

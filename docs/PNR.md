@@ -30,5 +30,5 @@ The shape is intentionally simplified to keep the demo small. A real implementat
 - **New PNR** – form to enter record locator, passengers and flight segments.
 - **Search PNR** – filter stored PNRs by record locator.
 
-The pages live under `src/pages/pnrs` and are registered through the TanStack Router configuration.
+The pages live under `src/pages/pnrs` and are linked to routes generated with `createFileRoute` under `src/routes`.
 

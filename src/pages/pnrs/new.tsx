@@ -31,7 +31,8 @@ function App() {
   const onSubmit = (data: Omit<Pnr, "id">) => {
     setPnrs([...pnrs, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate({ to: "/pnrs" });
+    // biome-ignore lint/suspicious/noExplicitAny: router uses any
+    navigate({ to: "/pnrs" as any });
   };
 
   return (

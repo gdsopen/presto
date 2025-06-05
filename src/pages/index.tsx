@@ -20,7 +20,8 @@ function App() {
     const result = await validateLogin(data.id, data.password);
 
     if (result.isValid) {
-      navigate({ to: "/home" });
+      // biome-ignore lint/suspicious/noExplicitAny: router uses any
+      navigate({ to: "/home" as any });
     } else {
       console.error(result.error);
     }
@@ -28,7 +29,8 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate({ to: "/home" });
+      // biome-ignore lint/suspicious/noExplicitAny: router uses any
+      navigate({ to: "/home" as any });
     }
   }, [isAuthenticated, navigate]);
 
