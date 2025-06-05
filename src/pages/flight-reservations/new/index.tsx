@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { css } from "../../../../styled-system/css";
 import { MainLayout } from "../../../layouts/MainLayout";
 import {
-  flightReservationsAtom,
   type FlightReservation,
+  flightReservationsAtom,
 } from "../../../lib/Atoms";
 
 function App() {

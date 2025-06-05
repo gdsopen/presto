@@ -1,10 +1,10 @@
 import { useAtom } from "jotai";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { css } from "../../../../styled-system/css";
-import { MainLayout } from "../../../layouts/MainLayout";
-import { pnrsAtom, type Pnr } from "../../../lib/Atoms";
-import { generateRecordLocator } from "../../../lib/utils";
+import { css } from "../../../styled-system/css";
+import { MainLayout } from "../../layouts/MainLayout";
+import { type Pnr, pnrsAtom } from "../../lib/Atoms";
+import { generateRecordLocator } from "../../lib/utils";
 
 function App() {
   const [pnrs, setPnrs] = useAtom(pnrsAtom);

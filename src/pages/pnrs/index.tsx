@@ -5,29 +5,7 @@ import { pnrsAtom } from "../../lib/Atoms";
 
 function App() {
   const pnrs = useAtomValue(pnrsAtom);
-
-        <div
-          className={css({
-            display: "flex",
-            gap: "10px",
-            marginBottom: "10px",
-          })}
-        >
-          <a href="/pnrs/search">
-            <button
-              type="button"
-              className={css({
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                backgroundColor: "#60abe0",
-                color: "#fff",
-                cursor: "pointer",
-              })}
-            >
-              Search PNR
-            </button>
-          </a>
+  const handleRowClick = (id: string) => {
     window.location.href = `/pnrs/details?id=${id}`;
   };
 
@@ -57,6 +35,21 @@ function App() {
               })}
             >
               New PNR
+            </button>
+          </a>
+          <a href="/pnrs/search">
+            <button
+              type="button"
+              className={css({
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                backgroundColor: "#60abe0",
+                color: "#fff",
+                cursor: "pointer",
+              })}
+            >
+              Search PNR
             </button>
           </a>
         </div>

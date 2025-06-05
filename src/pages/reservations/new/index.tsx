@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { css } from "../../../../styled-system/css";
 import { MainLayout } from "../../../layouts/MainLayout";
-import { reservationsAtom, type Reservation } from "../../../lib/Atoms";
+import { type Reservation, reservationsAtom } from "../../../lib/Atoms";
 
 function App() {
   const [reservations, setReservations] = useAtom(reservationsAtom);
