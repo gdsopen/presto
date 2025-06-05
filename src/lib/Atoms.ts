@@ -62,3 +62,27 @@ export const flightReservationsAtom = atomWithStorage<FlightReservation[]>(
   "flightReservations",
   [],
 );
+
+export type PnrPassenger = {
+  rph: string;
+  name: string;
+  ffp?: string;
+};
+
+export type PnrFlight = {
+  flightNumber: string;
+  from: string;
+  to: string;
+  date: string;
+  seat?: string;
+};
+
+export type Pnr = {
+  id: string;
+  recordLocator: string;
+  passengers: PnrPassenger[];
+  flights: PnrFlight[];
+  note: string;
+};
+
+export const pnrsAtom = atomWithStorage<Pnr[]>("pnrs", []);
