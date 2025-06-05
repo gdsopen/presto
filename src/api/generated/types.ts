@@ -139,7 +139,7 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["PassengerNameRecord"];
+                    "application/json": components["schemas"]["PassengerNameRecordUpdate"];
                 };
             };
             responses: {
@@ -298,7 +298,7 @@ export interface paths {
             };
             requestBody?: {
                 content: {
-                    "application/json": components["schemas"]["PassengerFlightRecord"];
+                    "application/json": components["schemas"]["PassengerFlightRecordUpdate"];
                 };
             };
             responses: {
@@ -701,6 +701,138 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/pnrgov/full/{pnrId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    pnrId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description EDIFACT message */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": string;
+                    };
+                };
+                /** @description PNR not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pnrgov/update/{pnrId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    pnrId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description EDIFACT message */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": string;
+                    };
+                };
+                /** @description PNR not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/pnrgov/adhoc/{pnrId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    pnrId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description EDIFACT message */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": string;
+                    };
+                };
+                /** @description PNR not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -741,6 +873,9 @@ export interface components {
             securityData?: string;
             passengerUserId?: string;
         };
+        PassengerNameRecordUpdate: components["schemas"]["PassengerNameRecord"] & {
+            id: string;
+        };
         Id: {
             id: string;
         };
@@ -759,6 +894,9 @@ export interface components {
             seatNumber?: string;
             checkInSequenceNumber?: number;
             passengerUserId?: string;
+        };
+        PassengerFlightRecordUpdate: components["schemas"]["PassengerFlightRecord"] & {
+            id: string;
         };
         UpdateUser: {
             currentPassword: string;
