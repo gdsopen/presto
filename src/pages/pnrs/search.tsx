@@ -9,7 +9,7 @@ function App() {
   const [query, setQuery] = useState("");
 
   const filtered = pnrs.filter((p) =>
-    p.recordLocator.toLowerCase().includes(query.toLowerCase())
+    p.recordLocator.toLowerCase().includes(query.toLowerCase()),
   );
   const handleRowClick = (id: string) => {
     window.location.href = `/pnrs/details?id=${id}`;
