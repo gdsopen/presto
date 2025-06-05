@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["src/router.ts", "styled-system", "src-tauri"]
+    "ignore": ["styled-system", "src-tauri", "src/api/generated"]
   },
   "formatter": {
     "enabled": true,
