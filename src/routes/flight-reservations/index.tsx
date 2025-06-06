@@ -1,10 +1,16 @@
+import { createFileRoute } from "@tanstack/react-router";
+
 import { useAtomValue } from "jotai";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { reservationsAtom } from "../../lib/Atoms";
+import { flightReservationsAtom } from "../../lib/Atoms";
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/flight-reservations")({
+  component: FlightReservationsPage,
+});
 
-function App() {
-  const reservations = useAtomValue(reservationsAtom);
+function FlightReservationsPage() {
+  const flights = useAtomValue(flightReservationsAtom);
 
   return (
     <MainLayout>
@@ -16,10 +22,10 @@ function App() {
             color: "#333",
           })}
         >
-          Reservations
+          Flight Reservations
         </h1>
         <div className={css({ marginBottom: "10px" })}>
-          <a href="/reservations/new">
+          <a href="/flight-reservations/new">
             <button
               type="button"
               className={css({
@@ -31,12 +37,12 @@ function App() {
                 cursor: "pointer",
               })}
             >
-              New Reservation
+              New Flight Reservation
             </button>
           </a>
         </div>
-        {reservations.length === 0 ? (
-          <p>No reservations yet.</p>
+        {flights.length === 0 ? (
+          <p>No flight reservations yet.</p>
         ) : (
           <table
             className={css({
@@ -53,7 +59,34 @@ function App() {
                     padding: "8px",
                   })}
                 >
-                  Name
+                  Passenger
+                </th>
+                <th
+                  className={css({
+                    textAlign: "left",
+                    borderBottom: "1px solid #ccc",
+                    padding: "8px",
+                  })}
+                >
+                  Flight No
+                </th>
+                <th
+                  className={css({
+                    textAlign: "left",
+                    borderBottom: "1px solid #ccc",
+                    padding: "8px",
+                  })}
+                >
+                  From
+                </th>
+                <th
+                  className={css({
+                    textAlign: "left",
+                    borderBottom: "1px solid #ccc",
+                    padding: "8px",
+                  })}
+                >
+                  To
                 </th>
                 <th
                   className={css({
@@ -80,7 +113,7 @@ function App() {
                     padding: "8px",
                   })}
                 >
-                  People
+                  Seat
                 </th>
                 <th
                   className={css({
@@ -94,15 +127,15 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {reservations.map((r) => (
-                <tr key={r.id}>
+              {flights.map((f) => (
+                <tr key={f.id}>
                   <td
                     className={css({
                       padding: "8px",
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {r.name}
+                    {f.passengerName}
                   </td>
                   <td
                     className={css({
@@ -110,7 +143,7 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {r.date}
+                    {f.flightNumber}
                   </td>
                   <td
                     className={css({
@@ -118,7 +151,7 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {r.time}
+                    {f.departure}
                   </td>
                   <td
                     className={css({
@@ -126,7 +159,7 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {r.people}
+                    {f.arrival}
                   </td>
                   <td
                     className={css({
@@ -134,7 +167,31 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {r.note}
+                    {f.date}
+                  </td>
+                  <td
+                    className={css({
+                      padding: "8px",
+                      borderBottom: "1px solid #eee",
+                    })}
+                  >
+                    {f.time}
+                  </td>
+                  <td
+                    className={css({
+                      padding: "8px",
+                      borderBottom: "1px solid #eee",
+                    })}
+                  >
+                    {f.seat}
+                  </td>
+                  <td
+                    className={css({
+                      padding: "8px",
+                      borderBottom: "1px solid #eee",
+                    })}
+                  >
+                    {f.note}
                   </td>
                 </tr>
               ))}
@@ -146,4 +203,4 @@ function App() {
   );
 }
 
-export default App;
+export default FlightReservationsPage;

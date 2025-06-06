@@ -1,12 +1,21 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 import { pnrsAtom } from "../../lib/Atoms";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/pnrs")({
+  component: PnrsPage,
+  path: "pnrs",
+});
+
+function PnrsPage() {
   const pnrs = useAtomValue(pnrsAtom);
+  const navigate = useNavigate();
   const handleRowClick = (id: string) => {
-    window.location.href = `/pnrs/details?id=${id}`;
+    navigate({ to: "/pnrs/details", search: { id: Number(id) } });
   };
 
   return (
@@ -22,7 +31,7 @@ function App() {
           PNRs
         </h1>
         <div className={css({ marginBottom: "10px" })}>
-          <a href="/pnrs/new">
+          <Link to="/pnrs/new">
             <button
               type="button"
               className={css({
@@ -36,8 +45,8 @@ function App() {
             >
               New PNR
             </button>
-          </a>
-          <a href="/pnrs/search">
+          </Link>
+          <Link to="/pnrs/search">
             <button
               type="button"
               className={css({
@@ -51,7 +60,7 @@ function App() {
             >
               Search PNR
             </button>
-          </a>
+          </Link>
         </div>
         {pnrs.length === 0 ? (
           <p>No PNRs yet.</p>
@@ -156,5 +165,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

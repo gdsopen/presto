@@ -1,13 +1,21 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 import { pnrsAtom } from "../../lib/Atoms";
 
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/pnrs/details")({
+  component: PnrDetail,
+});
+
 function PnrDetail() {
   const urlParams = new URLSearchParams(window.location.search);
   const id = urlParams.get("id");
   const pnrs = useAtomValue(pnrsAtom);
-  const pnr = pnrs.find((p) => p.id === id);
+  console.log("URL ID:", id);
+  console.log("All PNRs:", pnrs);
+  const pnr = pnrs.find((p) => p.id === id?.toString());
 
   if (!pnr) {
     return (
@@ -124,5 +132,3 @@ function PnrDetail() {
     </MainLayout>
   );
 }
-
-export default PnrDetail;

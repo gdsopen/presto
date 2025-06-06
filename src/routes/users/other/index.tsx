@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -8,7 +9,12 @@ import { useAuth } from "../../../hooks/useLoginValidation";
 import { MainLayout } from "../../../layouts/MainLayout";
 import { authTokenAtom } from "../../../lib/Atoms";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/users/other")({
+  component: UserOtherPage,
+});
+
+function UserOtherPage() {
   const { user } = useAuth();
   const { register, handleSubmit, reset, setValue } = useForm<
     components["schemas"]["UpdateOtherUser"]
@@ -260,5 +266,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

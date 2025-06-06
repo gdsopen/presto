@@ -1,19 +1,16 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { pnrsAtom } from "../../lib/Atoms";
+import { reservationsAtom } from "../../lib/Atoms";
 
-function App() {
-  const pnrs = useAtomValue(pnrsAtom);
-  const [query, setQuery] = useState("");
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/reservations")({
+  component: ReservationsPage,
+});
 
-  const filtered = pnrs.filter((p) =>
-    p.recordLocator.toLowerCase().includes(query.toLowerCase()),
-  );
-  const handleRowClick = (id: string) => {
-    window.location.href = `/pnrs/details?id=${id}`;
-  };
+function ReservationsPage() {
+  const reservations = useAtomValue(reservationsAtom);
 
   return (
     <MainLayout>
@@ -25,27 +22,34 @@ function App() {
             color: "#333",
           })}
         >
-          Search PNRs
+          Reservations
         </h1>
         <div className={css({ marginBottom: "10px" })}>
-          <input
-            type="text"
-            placeholder="Record Locator"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+          <a href="/reservations/new">
+            <button
+              type="button"
+              className={css({
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                borderRadius: "5px",
+                backgroundColor: "#60abe0",
+                color: "#fff",
+                cursor: "pointer",
+              })}
+            >
+              New Reservation
+            </button>
+          </a>
+        </div>
+        {reservations.length === 0 ? (
+          <p>No reservations yet.</p>
+        ) : (
+          <table
             className={css({
               width: "100%",
-              maxWidth: "300px",
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              padding: "8px",
+              borderCollapse: "collapse",
             })}
-          />
-        </div>
-        {filtered.length === 0 ? (
-          <p>No matching PNRs.</p>
-        ) : (
-          <table className={css({ width: "100%", borderCollapse: "collapse" })}>
+          >
             <thead>
               <tr>
                 <th
@@ -55,7 +59,7 @@ function App() {
                     padding: "8px",
                   })}
                 >
-                  Record Locator
+                  Name
                 </th>
                 <th
                   className={css({
@@ -64,7 +68,7 @@ function App() {
                     padding: "8px",
                   })}
                 >
-                  Passengers
+                  Date
                 </th>
                 <th
                   className={css({
@@ -73,7 +77,16 @@ function App() {
                     padding: "8px",
                   })}
                 >
-                  Flights
+                  Time
+                </th>
+                <th
+                  className={css({
+                    textAlign: "left",
+                    borderBottom: "1px solid #ccc",
+                    padding: "8px",
+                  })}
+                >
+                  People
                 </th>
                 <th
                   className={css({
@@ -87,30 +100,15 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
-                <tr
-                  key={p.id}
-                  onClick={() => handleRowClick(p.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleRowClick(p.id);
-                    }
-                  }}
-                  tabIndex={0}
-                  className={css({
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  })}
-                >
+              {reservations.map((r) => (
+                <tr key={r.id}>
                   <td
                     className={css({
                       padding: "8px",
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.recordLocator}
+                    {r.name}
                   </td>
                   <td
                     className={css({
@@ -118,7 +116,7 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.passengers.map((ps) => ps.name).join(", ")}
+                    {r.date}
                   </td>
                   <td
                     className={css({
@@ -126,7 +124,7 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.flights.map((f) => f.flightNumber).join(", ")}
+                    {r.time}
                   </td>
                   <td
                     className={css({
@@ -134,7 +132,15 @@ function App() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.note}
+                    {r.people}
+                  </td>
+                  <td
+                    className={css({
+                      padding: "8px",
+                      borderBottom: "1px solid #eee",
+                    })}
+                  >
+                    {r.note}
                   </td>
                 </tr>
               ))}
@@ -145,5 +151,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

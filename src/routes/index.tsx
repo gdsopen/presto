@@ -1,17 +1,22 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../styled-system/css";
+import { LoginForm } from "../components/LoginForm";
+import { LoginHeader } from "../components/LoginLeftHero";
 import { useAuth, useLoginValidation } from "../hooks/useLoginValidation";
 import { LoginLayout } from "../layouts/LoginLayout";
-import { LoginForm } from "./_components/LoginForm";
-import { LoginHeader } from "./_components/LoginLeftHero";
 
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/")({
+  component: UsersPage,
+});
 type LoginFormData = {
   id: string;
   password: string;
 };
 
-function App() {
+function UsersPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
   const { validateLogin, isLoading } = useLoginValidation();
@@ -20,7 +25,8 @@ function App() {
     const result = await validateLogin(data.id, data.password);
 
     if (result.isValid) {
-      navigate("/home");
+      // biome-ignore lint/suspicious/noExplicitAny: router uses any
+      navigate({ to: "/home" as any });
     } else {
       console.error(result.error);
     }
@@ -28,7 +34,8 @@ function App() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/home");
+      // biome-ignore lint/suspicious/noExplicitAny: router uses any
+      navigate({ to: "/home" as any });
     }
   }, [isAuthenticated, navigate]);
 
@@ -53,5 +60,3 @@ function App() {
     </LoginLayout>
   );
 }
-
-export default App;

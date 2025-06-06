@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 import { LoginInput } from "./LoginInput";
 
 type LoginFormData = {

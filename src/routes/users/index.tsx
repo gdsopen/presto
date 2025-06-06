@@ -1,3 +1,4 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { css } from "../../../styled-system/css";
@@ -6,7 +7,12 @@ import { Button } from "../../components/Button";
 import { useAuth } from "../../hooks/useLoginValidation";
 import { MainLayout } from "../../layouts/MainLayout";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/users")({
+  component: UsersPage,
+});
+
+function UsersPage() {
   const { user } = useAuth();
   const { reset } = useForm<components["schemas"]["UpdateUser"]>({
     defaultValues: {
@@ -57,5 +63,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

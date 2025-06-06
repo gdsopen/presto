@@ -1,11 +1,18 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../../../styled-system/css";
 import { MainLayout } from "../../../layouts/MainLayout";
 import { type Reservation, reservationsAtom } from "../../../lib/Atoms";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/reservations/new")({
+  component: NewReservationPage,
+});
+
+function NewReservationPage() {
   const [reservations, setReservations] = useAtom(reservationsAtom);
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm<Omit<Reservation, "id">>({
@@ -21,7 +28,8 @@ function App() {
   const onSubmit = (data: Omit<Reservation, "id">) => {
     setReservations([...reservations, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate("/reservations");
+    // biome-ignore lint/suspicious/noExplicitAny: router uses any
+    navigate({ to: "/reservations" as any });
   };
 
   return (
@@ -129,5 +137,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

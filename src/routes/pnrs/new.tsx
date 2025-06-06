@@ -1,12 +1,18 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useAtom } from "jotai";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 import { type Pnr, pnrsAtom } from "../../lib/Atoms";
 import { generateRecordLocator } from "../../lib/utils";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/pnrs/new")({
+  component: NewPnrPage,
+});
+
+function NewPnrPage() {
   const [pnrs, setPnrs] = useAtom(pnrsAtom);
   const navigate = useNavigate();
   const { register, handleSubmit, control, reset } = useForm<Omit<Pnr, "id">>({
@@ -31,7 +37,8 @@ function App() {
   const onSubmit = (data: Omit<Pnr, "id">) => {
     setPnrs([...pnrs, { id: Date.now().toString(), ...data }]);
     reset();
-    navigate("/pnrs");
+    // biome-ignore lint/suspicious/noExplicitAny: router uses any
+    navigate({ to: "/pnrs" as any });
   };
 
   return (
@@ -241,5 +248,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;

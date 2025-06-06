@@ -1,7 +1,13 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 
-function App() {
+// biome-ignore lint/suspicious/noExplicitAny: file-based route
+export const Route = (createFileRoute as any)("/home")({
+  component: HomePage,
+});
+
+function HomePage() {
   return (
     <MainLayout>
       <h1
@@ -16,5 +22,3 @@ function App() {
     </MainLayout>
   );
 }
-
-export default App;
