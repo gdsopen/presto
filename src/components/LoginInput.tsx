@@ -1,5 +1,5 @@
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 
 type LoginFormData = {
   id: string;

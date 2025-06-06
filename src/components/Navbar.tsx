@@ -5,11 +5,11 @@ import {
 } from "@tabler/icons-react";
 import { useAtom, useAtomValue } from "jotai";
 import Cookies from "js-cookie";
-import { css } from "../../../../styled-system/css";
-import { Button } from "../../../components/Button";
-import { MenuItem, PopoverMenu } from "../../../components/PopoverMenu";
-import { PrinterSettings } from "../../../components/PrinterSettings";
-import { authTokenAtom, userDataAtom } from "../../../lib/Atoms";
+import { css } from "../../styled-system/css";
+import { authTokenAtom, userDataAtom } from "../lib/Atoms";
+import { Button } from "./Button";
+import { MenuItem, PopoverMenu } from "./PopoverMenu";
+import { PrinterSettings } from "./PrinterSettings";
 
 export const Navbar: React.FC = () => {
   const contents: React.ReactNode[] = [

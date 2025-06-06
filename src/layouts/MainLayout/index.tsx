@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { css } from "../../../styled-system/css";
+import { Navbar } from "../../components/Navbar";
 import { useAuth } from "../../hooks/useLoginValidation";
-import { Navbar } from "./_components/Navbar";
 
 export const MainLayout: React.FC<{
   children: React.ReactNode;

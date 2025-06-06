@@ -1,19 +1,47 @@
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
-import { routeTree } from "./routeTree";
+
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+
 import "./index.css";
 
-const router = createRouter({ routeTree });
+// Create a new router instance
+const router = createRouter({
+  routeTree,
+  context: {},
+  defaultPreload: "intent",
+  defaultPreloadStaleTime: 0,
+  defaultErrorComponent: ({ error }) => (
+    <div className="error-container">
+      <h1>エラーが発生しました</h1>
+      <p>{error.message}</p>
+    </div>
+  ),
+});
 
+// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+// Render the app
+const rootElement = document.getElementById("app");
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
+
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <StrictMode>
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </StrictMode>,
 );
+
+// // If you want to start measuring performance in your app, pass a function
+// // to log results (for example: reportWebVitals(console.log))
+// // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+// reportWebVitals();

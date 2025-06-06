@@ -1,5 +1,5 @@
 import { IconId } from "@tabler/icons-react";
-import { css } from "../../../styled-system/css";
+import { css } from "../../styled-system/css";
 
 export const LoginHeader = () => {
   return (
