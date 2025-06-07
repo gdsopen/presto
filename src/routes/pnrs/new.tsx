@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import { useFieldArray, useForm } from "react-hook-form";
+import { useState } from "react";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { type Pnr, pnrsAtom } from "../../lib/Atoms";
+import { createPassengerPNR, createFlightRecord } from "../../api/client";
+import type { components } from "../../api/generated/types";
+import { authTokenAtom } from "../../lib/Atoms";
 import { generateRecordLocator } from "../../lib/utils";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
@@ -12,14 +15,55 @@ export const Route = (createFileRoute as any)("/pnrs/new")({
   component: NewPnrPage,
 });
 
+// フォーム用の型定義
+type FormData = {
+  recordLocator: string;
+  passengers: Array<{
+    firstName: string;
+    lastName: string;
+    middleName?: string;
+    nameTitle: string;
+    documentType: string;
+  }>;
+  flights: Array<{
+    departurePort: string;
+    arrivalPort: string;
+    operatingCarrier: string;
+    flightNumber: number;
+    departureDate: string;
+    compartmentCode: string;
+    seatNumber?: string;
+  }>;
+  note: string;
+};
+
 function NewPnrPage() {
-  const [pnrs, setPnrs] = useAtom(pnrsAtom);
+  const token = useAtomValue(authTokenAtom);
   const navigate = useNavigate();
-  const { register, handleSubmit, control, reset } = useForm<Omit<Pnr, "id">>({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { register, handleSubmit, control, reset } = useForm<FormData>({
     defaultValues: {
       recordLocator: generateRecordLocator(),
-      passengers: [{ name: "", rph: "", ffp: "" }],
-      flights: [{ flightNumber: "", from: "", to: "", date: "", seat: "" }],
+      passengers: [
+        {
+          firstName: "",
+          lastName: "",
+          middleName: "",
+          nameTitle: "MR",
+          documentType: "P",
+        },
+      ],
+      flights: [
+        {
+          departurePort: "",
+          arrivalPort: "",
+          operatingCarrier: "",
+          flightNumber: 0,
+          departureDate: "",
+          compartmentCode: "Y",
+          seatNumber: "",
+        },
+      ],
       note: "",
     },
   });
@@ -34,11 +78,68 @@ function NewPnrPage() {
     remove: removeFlight,
   } = useFieldArray({ control, name: "flights" });
 
-  const onSubmit = (data: Omit<Pnr, "id">) => {
-    setPnrs([...pnrs, { id: Date.now().toString(), ...data }]);
-    reset();
-    // biome-ignore lint/suspicious/noExplicitAny: router uses any
-    navigate({ to: "/pnrs" as any });
+  const onSubmit = async (data: FormData) => {
+    if (!token.token) {
+      alert("認証トークンがありません");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      // 各乗客に対してPNRを作成
+      for (const passenger of data.passengers) {
+        const pnrData: components["schemas"]["PassengerNameRecord"] = {
+          pnrId: data.recordLocator,
+          firstName: passenger.firstName,
+          lastName: passenger.lastName,
+          middleName: passenger.middleName || "",
+          nameTitle: passenger.nameTitle,
+          passengerDescription: 1,
+          documentType: passenger.documentType,
+        };
+
+        const pnrResult = await createPassengerPNR(token.token, pnrData);
+
+        if (pnrResult.error) {
+          alert(`PNR作成エラー: ${pnrResult.error}`);
+          return;
+        }
+
+        // 各フライトレコードを作成
+        for (const flight of data.flights) {
+          const flightData: components["schemas"]["PassengerFlightRecord"] = {
+            pnrId: data.recordLocator,
+            departurePort: flight.departurePort,
+            arrivalPort: flight.arrivalPort,
+            operatingCarrier: flight.operatingCarrier,
+            flightNumber: flight.flightNumber,
+            departureDate: flight.departureDate,
+            compartmentCode: flight.compartmentCode,
+            seatNumber: flight.seatNumber || "",
+          };
+
+          const flightResult = await createFlightRecord(
+            token.token,
+            flightData
+          );
+
+          if (flightResult.error) {
+            alert(`フライトレコード作成エラー: ${flightResult.error}`);
+            return;
+          }
+        }
+      }
+
+      alert("PNRが正常に作成されました");
+      reset();
+      // biome-ignore lint/suspicious/noExplicitAny: router uses any
+      navigate({ to: "/pnrs" as any });
+    } catch (error) {
+      console.error("PNR作成エラー:", error);
+      alert(`エラーが発生しました: ${error}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -80,10 +181,18 @@ function NewPnrPage() {
             Passengers
           </h2>
           {passengerFields.map((field, idx) => (
-            <div key={field.id} className={css({ marginBottom: "10px" })}>
+            <div
+              key={field.id}
+              className={css({
+                marginBottom: "10px",
+                border: "1px solid #eee",
+                padding: "10px",
+                borderRadius: "5px",
+              })}
+            >
               <input
-                placeholder="Name"
-                {...register(`passengers.${idx}.name` as const)}
+                placeholder="名"
+                {...register(`passengers.${idx}.firstName` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -92,8 +201,8 @@ function NewPnrPage() {
                 })}
               />
               <input
-                placeholder="RPH"
-                {...register(`passengers.${idx}.rph` as const)}
+                placeholder="姓"
+                {...register(`passengers.${idx}.lastName` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -103,8 +212,8 @@ function NewPnrPage() {
                 })}
               />
               <input
-                placeholder="FFP"
-                {...register(`passengers.${idx}.ffp` as const)}
+                placeholder="ミドルネーム（任意）"
+                {...register(`passengers.${idx}.middleName` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -113,22 +222,59 @@ function NewPnrPage() {
                   marginTop: "4px",
                 })}
               />
+              <select
+                {...register(`passengers.${idx}.nameTitle` as const)}
+                className={css({
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "8px",
+                  marginTop: "4px",
+                })}
+              >
+                <option value="MR">MR</option>
+                <option value="MS">MS</option>
+                <option value="MRS">MRS</option>
+                <option value="DR">DR</option>
+              </select>
+              <select
+                {...register(`passengers.${idx}.documentType` as const)}
+                className={css({
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "8px",
+                  marginTop: "4px",
+                })}
+              >
+                <option value="P">パスポート</option>
+                <option value="D">運転免許証</option>
+                <option value="I">身分証明書</option>
+              </select>
               {passengerFields.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removePassenger(idx)}
-                  className={css({ marginTop: "4px" })}
+                  className={css({ marginTop: "4px", color: "red" })}
                 >
-                  Remove
+                  削除
                 </button>
               )}
             </div>
           ))}
           <button
             type="button"
-            onClick={() => addPassenger({ name: "", rph: "", ffp: "" })}
+            onClick={() =>
+              addPassenger({
+                firstName: "",
+                lastName: "",
+                middleName: "",
+                nameTitle: "MR",
+                documentType: "P",
+              })
+            }
           >
-            Add Passenger
+            乗客を追加
           </button>
         </div>
         <div>
@@ -136,10 +282,18 @@ function NewPnrPage() {
             Flights
           </h2>
           {flightFields.map((field, idx) => (
-            <div key={field.id} className={css({ marginBottom: "10px" })}>
+            <div
+              key={field.id}
+              className={css({
+                marginBottom: "10px",
+                border: "1px solid #eee",
+                padding: "10px",
+                borderRadius: "5px",
+              })}
+            >
               <input
-                placeholder="Flight Number"
-                {...register(`flights.${idx}.flightNumber` as const)}
+                placeholder="出発空港コード"
+                {...register(`flights.${idx}.departurePort` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -148,8 +302,8 @@ function NewPnrPage() {
                 })}
               />
               <input
-                placeholder="From"
-                {...register(`flights.${idx}.from` as const)}
+                placeholder="到着空港コード"
+                {...register(`flights.${idx}.arrivalPort` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -159,8 +313,22 @@ function NewPnrPage() {
                 })}
               />
               <input
-                placeholder="To"
-                {...register(`flights.${idx}.to` as const)}
+                placeholder="航空会社コード"
+                {...register(`flights.${idx}.operatingCarrier` as const)}
+                className={css({
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "8px",
+                  marginTop: "4px",
+                })}
+              />
+              <input
+                type="number"
+                placeholder="便名"
+                {...register(`flights.${idx}.flightNumber` as const, {
+                  valueAsNumber: true,
+                })}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -171,8 +339,8 @@ function NewPnrPage() {
               />
               <input
                 type="date"
-                placeholder="Date"
-                {...register(`flights.${idx}.date` as const)}
+                placeholder="出発日"
+                {...register(`flights.${idx}.departureDate` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -181,9 +349,23 @@ function NewPnrPage() {
                   marginTop: "4px",
                 })}
               />
+              <select
+                {...register(`flights.${idx}.compartmentCode` as const)}
+                className={css({
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  padding: "8px",
+                  marginTop: "4px",
+                })}
+              >
+                <option value="Y">エコノミークラス</option>
+                <option value="C">ビジネスクラス</option>
+                <option value="F">ファーストクラス</option>
+              </select>
               <input
-                placeholder="Seat"
-                {...register(`flights.${idx}.seat` as const)}
+                placeholder="座席番号（任意）"
+                {...register(`flights.${idx}.seatNumber` as const)}
                 className={css({
                   width: "100%",
                   border: "1px solid #ccc",
@@ -196,9 +378,9 @@ function NewPnrPage() {
                 <button
                   type="button"
                   onClick={() => removeFlight(idx)}
-                  className={css({ marginTop: "4px" })}
+                  className={css({ marginTop: "4px", color: "red" })}
                 >
-                  Remove
+                  削除
                 </button>
               )}
             </div>
@@ -207,19 +389,21 @@ function NewPnrPage() {
             type="button"
             onClick={() =>
               addFlight({
-                flightNumber: "",
-                from: "",
-                to: "",
-                date: "",
-                seat: "",
+                departurePort: "",
+                arrivalPort: "",
+                operatingCarrier: "",
+                flightNumber: 0,
+                departureDate: "",
+                compartmentCode: "Y",
+                seatNumber: "",
               })
             }
           >
-            Add Flight
+            フライトを追加
           </button>
         </div>
         <div>
-          <label htmlFor="pnr-note">Note</label>
+          <label htmlFor="pnr-note">備考</label>
           <textarea
             id="pnr-note"
             {...register("note")}
@@ -233,16 +417,17 @@ function NewPnrPage() {
         </div>
         <button
           type="submit"
+          disabled={isSubmitting}
           className={css({
             padding: "10px",
             border: "1px solid #ccc",
             borderRadius: "5px",
-            backgroundColor: "#000",
+            backgroundColor: isSubmitting ? "#ccc" : "#000",
             color: "#fff",
-            cursor: "pointer",
+            cursor: isSubmitting ? "not-allowed" : "pointer",
           })}
         >
-          Save
+          {isSubmitting ? "保存中..." : "保存"}
         </button>
       </form>
     </MainLayout>

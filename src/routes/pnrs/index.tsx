@@ -1,9 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { pnrsAtom } from "../../lib/Atoms";
+import { MenuCard } from "../../components/MenuCard";
+import { IconPlus, IconSearch } from "@tabler/icons-react";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs")({
@@ -12,155 +11,39 @@ export const Route = (createFileRoute as any)("/pnrs")({
 });
 
 function PnrsPage() {
-  const pnrs = useAtomValue(pnrsAtom);
-  const navigate = useNavigate();
-  const handleRowClick = (id: string) => {
-    navigate({ to: "/pnrs/details", search: { id: Number(id) } });
-  };
-
+  const menuItems = [
+    {
+      title: "Create Reservation",
+      icon: <IconPlus />,
+      description: "Create a new reservation",
+      path: "/pnrs/new",
+    },
+    {
+      title: "Search Reservation",
+      icon: <IconSearch />,
+      description: "Search for a reservation",
+      path: "/pnrs/search",
+    },
+  ];
   return (
     <MainLayout>
-      <div>
-        <h1
-          className={css({
-            fontSize: "1.7rem",
-            fontWeight: "700",
-            color: "#333",
-          })}
-        >
-          PNRs
-        </h1>
-        <div className={css({ marginBottom: "10px" })}>
-          <Link to="/pnrs/new">
-            <button
-              type="button"
-              className={css({
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                backgroundColor: "#60abe0",
-                color: "#fff",
-                cursor: "pointer",
-              })}
-            >
-              New PNR
-            </button>
+      <h2 className={css({ fontSize: "1.5rem", fontWeight: "bold" })}>
+        Reservation & Gate Control
+      </h2>
+      <div
+        className={css({
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "15px",
+        })}
+      >
+        {menuItems.map((item) => (
+          <Link key={item.title} to={item.path}>
+            <MenuCard title={item.title} icon={item.icon}>
+              <p>{item.description}</p>
+            </MenuCard>
           </Link>
-          <Link to="/pnrs/search">
-            <button
-              type="button"
-              className={css({
-                padding: "8px 16px",
-                border: "1px solid #ccc",
-                borderRadius: "5px",
-                backgroundColor: "#60abe0",
-                color: "#fff",
-                cursor: "pointer",
-              })}
-            >
-              Search PNR
-            </button>
-          </Link>
-        </div>
-        {pnrs.length === 0 ? (
-          <p>No PNRs yet.</p>
-        ) : (
-          <table className={css({ width: "100%", borderCollapse: "collapse" })}>
-            <thead>
-              <tr>
-                <th
-                  className={css({
-                    textAlign: "left",
-                    borderBottom: "1px solid #ccc",
-                    padding: "8px",
-                  })}
-                >
-                  Record Locator
-                </th>
-                <th
-                  className={css({
-                    textAlign: "left",
-                    borderBottom: "1px solid #ccc",
-                    padding: "8px",
-                  })}
-                >
-                  Passengers
-                </th>
-                <th
-                  className={css({
-                    textAlign: "left",
-                    borderBottom: "1px solid #ccc",
-                    padding: "8px",
-                  })}
-                >
-                  Flights
-                </th>
-                <th
-                  className={css({
-                    textAlign: "left",
-                    borderBottom: "1px solid #ccc",
-                    padding: "8px",
-                  })}
-                >
-                  Note
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {pnrs.map((p) => (
-                <tr
-                  key={p.id}
-                  onClick={() => handleRowClick(p.id)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleRowClick(p.id);
-                    }
-                  }}
-                  tabIndex={0}
-                  className={css({
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f5f5f5",
-                    },
-                  })}
-                >
-                  <td
-                    className={css({
-                      padding: "8px",
-                      borderBottom: "1px solid #eee",
-                    })}
-                  >
-                    {p.recordLocator}
-                  </td>
-                  <td
-                    className={css({
-                      padding: "8px",
-                      borderBottom: "1px solid #eee",
-                    })}
-                  >
-                    {p.passengers.map((ps) => ps.name).join(", ")}
-                  </td>
-                  <td
-                    className={css({
-                      padding: "8px",
-                      borderBottom: "1px solid #eee",
-                    })}
-                  >
-                    {p.flights.map((f) => f.flightNumber).join(", ")}
-                  </td>
-                  <td
-                    className={css({
-                      padding: "8px",
-                      borderBottom: "1px solid #eee",
-                    })}
-                  >
-                    {p.note}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+        ))}
       </div>
     </MainLayout>
   );

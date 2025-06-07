@@ -1,81 +1,141 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useAtomValue } from "jotai";
+import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { useState, useEffect, useMemo } from "react";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { pnrsAtom } from "../../lib/Atoms";
+import { getPassengerPNR } from "../../api/client";
 import { encode } from "bcbp";
 import { invoke } from "@tauri-apps/api/core";
+import type { components } from "../../api/generated/types";
+import { authTokenAtom, printerAtom } from "../../lib/Atoms";
+import { useAtomValue } from "jotai";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs/details")({
   component: PnrDetail,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      id: search.id as string,
+    };
+  },
 });
 
 function PnrDetail() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const id = urlParams.get("id");
-  const pnrs = useAtomValue(pnrsAtom);
-  console.log("URL ID:", id);
-  const pnr = pnrs.find((p) => p.id === id?.toString());
+  const { id } = useSearch({ from: "/pnrs/details" });
+  const { vendor_id, device_id } = useAtomValue(printerAtom);
+  const [pnr, setPnr] = useState<
+    components["schemas"]["PassengerNameRecordWithFlights"] | null
+  >(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const token = useAtomValue(authTokenAtom);
+
+  useEffect(() => {
+    const fetchPNRs = async () => {
+      try {
+        if (!token) {
+          setError("認証トークンが見つかりません");
+          return;
+        }
+        const response = await getPassengerPNR(token.token, id || "");
+        if (response) {
+          setPnr(response);
+        }
+      } catch (err) {
+        setError(
+          `PNRの取得に失敗しました: ${
+            err instanceof Error ? err.message : "Unknown error"
+          }`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPNRs();
+    } else {
+      setError("PNR IDが指定されていません");
+      setLoading(false);
+    }
+  }, [id, token]);
+
+  // 搭乗券データを事前に準備（useMemoで最適化）
+  const bcbpData = useMemo(() => {
+    if (!pnr) return null;
+
+    return encode({
+      data: {
+        passengerName: `${pnr.firstName} ${pnr.lastName}`,
+        passengerDescription: `${pnr.firstName} ${pnr.lastName}`,
+        //W - Web  K - Airport Kiosk  R - Remote or Off Site Kiosk  M - Mobile Device  O - Airport Agent  T - Town Agent  V - Third Party Vendor
+        checkInSource: pnr.checkInSource || "W",
+        boardingPassIssuanceSource: pnr.boardingPassIssuanceSource || "O",
+        issuanceDate: pnr.issuanceDate
+          ? new Date(pnr.issuanceDate)
+          : new Date(),
+        documentType: pnr.documentType || "B",
+        boardingPassIssuerDesignator: pnr.boardingPassIssuerDesignator || "XA",
+        legs: pnr.passengerFlightRecord.map((flight) => ({
+          operatingCarrierPNR: flight.pnrId,
+          departureAirport: flight.departurePort,
+          arrivalAirport: flight.arrivalPort,
+          operatingCarrierDesignator: flight.operatingCarrier,
+          flightNumber: flight.flightNumber.toString().padStart(4, "0"),
+          flightDate: new Date(flight.departureDate),
+          compartmentCode: flight.compartmentCode,
+          seatNumber: flight.seatNumber || "N/A",
+          checkInSequenceNumber:
+            flight.checkInSequenceNumber?.toString() || "1",
+          passengerStatus: "1",
+          marketingCarrierDesignator: flight.operatingCarrier,
+          idIndicator: "1",
+        })),
+      },
+      meta: {
+        formatCode: "M",
+        numberOfLegs: 1,
+        electronicTicketIndicator: "E",
+        versionNumber: 6,
+      },
+    });
+  }, [pnr]);
 
   const handlePrintBoardingPass = async () => {
-    if (!pnr) return;
+    if (!bcbpData) return;
+
     try {
-      const bcbpData = encode({
-        data: {
-          passengerName: pnr.passengers[0].name,
-          passengerDescription: pnr.passengers[0].name,
-          //W - Web  K - Airport Kiosk  R - Remote or Off Site Kiosk  M - Mobile Device  O - Airport Agent  T - Town Agent  V - Third Party Vendor
-          checkInSource: "W",
-          boardingPassIssuanceSource: "O",
-          issuanceDate: new Date(),
-          documentType: "B",
-          boardingPassIssuerDesignator: "XA",
-          legs: [
-            {
-              operatingCarrierPNR: pnr.recordLocator,
-              departureAirport: pnr.flights[0].from,
-              arrivalAirport: pnr.flights[0].to,
-              operatingCarrierDesignator: pnr.flights[0].flightNumber.slice(
-                0,
-                2
-              ),
-              flightNumber: pnr.flights[0].flightNumber.slice(2),
-              flightDate: new Date(),
-              compartmentCode: "Y",
-              seatNumber: pnr.flights[0].seat,
-              checkInSequenceNumber: "1",
-              passengerStatus: "1",
-              marketingCarrierDesignator: pnr.flights[0].flightNumber.slice(
-                0,
-                2
-              ),
-              frequentFlyerAirlineDesignator: "1",
-              frequentFlyerNumber: "1",
-              idIndicator: "1",
-            },
-          ],
-        },
-        meta: {
-          formatCode: "M",
-          numberOfLegs: pnr.flights.length,
-          electronicTicketIndicator: "E",
-          versionNumber: 6,
-        },
-      });
-
       console.log(bcbpData);
-
-      await invoke("image_print", { bcbpData });
+      console.log(vendor_id, device_id);
+      await invoke("pass_print", {
+        vendorId: vendor_id,
+        deviceId: device_id,
+        bcbpData: bcbpData,
+      });
     } catch (error) {
-      console.error("Failed to print boarding pass:", error);
+      console.error("搭乗券の印刷に失敗しました:", error);
     }
   };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <div>読み込み中...</div>
+      </MainLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <MainLayout>
+        <div>エラー: {error}</div>
+      </MainLayout>
+    );
+  }
 
   if (!pnr) {
     return (
       <MainLayout>
-        <div>PNR not found</div>
+        <div>PNRが見つかりません</div>
       </MainLayout>
     );
   }
@@ -145,7 +205,7 @@ function PnrDetail() {
             >
               Record Locator
             </h2>
-            <p>{pnr.recordLocator}</p>
+            <p>{pnr.pnrId}</p>
           </div>
 
           <div className={css({ marginBottom: "20px" })}>
@@ -156,13 +216,18 @@ function PnrDetail() {
                 marginBottom: "10px",
               })}
             >
-              Passengers
+              Passenger Information
             </h2>
-            <ul>
-              {pnr.passengers.map((passenger) => (
-                <li key={passenger.name}>{passenger.name}</li>
-              ))}
-            </ul>
+            <div>
+              <p>
+                <strong>Name:</strong> {pnr.nameTitle} {pnr.firstName}{" "}
+                {pnr.middleName} {pnr.lastName}
+              </p>
+              <p>
+                <strong>Passenger Description:</strong>{" "}
+                {pnr.passengerDescription}
+              </p>
+            </div>
           </div>
 
           <div className={css({ marginBottom: "20px" })}>
@@ -175,29 +240,66 @@ function PnrDetail() {
             >
               Flights
             </h2>
-            <ul>
-              {pnr.flights.map((flight) => (
-                <li key={flight.flightNumber}>
-                  {flight.flightNumber} - {flight.from} to {flight.to}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {pnr.note && (
-            <div>
-              <h2
+            {pnr.passengerFlightRecord.map((flight, index) => (
+              <div
+                key={`${flight.pnrId}-${index}`}
                 className={css({
-                  fontSize: "1.2rem",
-                  fontWeight: "600",
-                  marginBottom: "10px",
+                  marginBottom: "15px",
+                  padding: "10px",
+                  border: "1px solid #eee",
+                  borderRadius: "5px",
                 })}
               >
-                Note
-              </h2>
-              <p>{pnr.note}</p>
+                <p>
+                  <strong>Flight:</strong> {flight.operatingCarrier}
+                  {flight.flightNumber}
+                </p>
+                <p>
+                  <strong>Route:</strong> {flight.departurePort} →{" "}
+                  {flight.arrivalPort}
+                </p>
+                <p>
+                  <strong>Departure Date:</strong>{" "}
+                  {new Date(flight.departureDate).toLocaleDateString()}
+                </p>
+                <p>
+                  <strong>Seat:</strong> {flight.seatNumber}
+                </p>
+                <p>
+                  <strong>Class:</strong> {flight.compartmentCode}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className={css({ marginBottom: "20px" })}>
+            <h2
+              className={css({
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                marginBottom: "10px",
+              })}
+            >
+              Document Information
+            </h2>
+            <div>
+              <p>
+                <strong>Document Type:</strong> {pnr.documentType}
+              </p>
+              <p>
+                <strong>Issuance Date:</strong>{" "}
+                {pnr.issuanceDate
+                  ? new Date(pnr.issuanceDate).toLocaleDateString()
+                  : "N/A"}
+              </p>
+              {pnr.boardingPassIssuerDesignator && (
+                <p>
+                  <strong>Issuer Designator:</strong>{" "}
+                  {pnr.boardingPassIssuerDesignator}
+                </p>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
     </MainLayout>

@@ -18,7 +18,7 @@ export const useLoginValidation = (): {
   isInitialized: boolean;
   validateLogin: (
     id: string,
-    password: string,
+    password: string
   ) => Promise<LoginValidationResult>;
   logout: () => void;
 } => {
@@ -30,7 +30,7 @@ export const useLoginValidation = (): {
 
   const validateLogin = async (
     id: string,
-    password: string,
+    password: string
   ): Promise<LoginValidationResult> => {
     setIsLoading(true);
     try {
@@ -51,7 +51,7 @@ export const useLoginValidation = (): {
       }
       Cookies.set(COOKIE_NAME, newToken, {
         expires: 7, // 7日間有効
-        secure: true, // HTTPSのみ
+        secure: window.location.protocol === "https:", // HTTPSの場合のみsecure
         sameSite: "strict", // CSRF対策
       });
       setToken({ token: newToken, loading: false });
@@ -92,7 +92,6 @@ export const useLoginValidation = (): {
           setUserData(response.data as UserData);
         }
       } catch (error) {
-        console.error("Failed to fetch user data:", error);
         setUserData(null);
       } finally {
         setIsInitialized(true);

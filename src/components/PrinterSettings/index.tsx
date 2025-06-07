@@ -36,7 +36,6 @@ export const PrinterSettings: React.FC = () => {
         <SelectPrinter items={[...detectedDevices]} label="Select Printer" />
         <Button
           onPress={async () => {
-            console.log(selectedPrinter);
             invoke("test", {
               vendorId: selectedPrinter.vendor_id,
               deviceId: selectedPrinter.device_id,

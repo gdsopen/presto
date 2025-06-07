@@ -19,7 +19,16 @@ export type AuthToken = {
 };
 
 export const authTokenAtom = atom<AuthToken>({
-  token: "",
+  token:
+    typeof window !== "undefined"
+      ? (() => {
+          const cookies = document.cookie.split(";");
+          const adminTokenCookie = cookies.find((c) =>
+            c.trim().startsWith("admin_token=")
+          );
+          return adminTokenCookie ? adminTokenCookie.split("=")[1] : "";
+        })()
+      : "",
   loading: false,
 });
 
@@ -84,5 +93,3 @@ export type Pnr = {
   flights: PnrFlight[];
   note: string;
 };
-
-export const pnrsAtom = atom<Pnr[]>("pnrs", []);

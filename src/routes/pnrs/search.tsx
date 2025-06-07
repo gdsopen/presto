@@ -1,10 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
-import { pnrsAtom } from "../../lib/Atoms";
+import { authTokenAtom } from "../../lib/Atoms";
+import { getPnrByName } from "../../api/client";
+import type { components } from "../../api/generated/types";
+
+// APIから取得したPNRデータの型定義
+type PNRData = components["schemas"]["PassengerNameRecord"] & {
+  id?: string;
+  passengers?: Array<{ name: string }>;
+  flights?: Array<{ flightNumber: string }>;
+  recordLocator?: string;
+  note?: string;
+};
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs/search")({
@@ -14,13 +25,68 @@ export const Route = (createFileRoute as any)("/pnrs/search")({
 });
 
 function SearchPnrsPage() {
-  const pnrs = useAtomValue(pnrsAtom);
+  const token = useAtomValue(authTokenAtom);
+  const [pnrs, setPnrs] = useState<PNRData[]>([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const filtered = pnrs.filter((p) =>
-    p.recordLocator.toLowerCase().includes(query.toLowerCase()),
-  );
+  // 検索用のdebounce効果
+  useEffect(() => {
+    if (!query.trim()) {
+      setPnrs([]);
+      setError(null);
+      return;
+    }
+
+    const timeoutId = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        if (!token.token) {
+          setError("認証トークンが見つかりません");
+          setLoading(false);
+          return;
+        }
+
+        const response = await getPnrByName(token.token, query.trim());
+        if (response.data) {
+          // APIレスポンスが単一のPNRの場合、配列に変換
+          const pnrArray = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
+
+          // APIデータをPNRData型に変換
+          const convertedPnrs: PNRData[] = pnrArray.map(
+            (pnrData: components["schemas"]["PassengerNameRecord"]) => ({
+              ...pnrData,
+              id: pnrData.pnrId,
+              recordLocator: pnrData.pnrId,
+              passengers: [
+                { name: `${pnrData.firstName} ${pnrData.lastName}` },
+              ],
+              flights: [], // フライト情報は別途取得が必要な場合があります
+              note: pnrData.documentType || "",
+            })
+          );
+
+          setPnrs(convertedPnrs);
+        } else {
+          setPnrs([]);
+        }
+      } catch (err) {
+        setError(`PNRの取得に失敗しました: ${err}`);
+        setPnrs([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [query, token.token]);
+
   const handleRowClick = (id: string) => {
     navigate({ to: "/pnrs/details", search: { id } });
   };
@@ -56,9 +122,11 @@ function SearchPnrsPage() {
         <div className={css({ marginBottom: "10px" })}>
           <input
             type="text"
-            placeholder="Record Locator"
+            placeholder="名前を入力してください"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+            }}
             className={css({
               width: "100%",
               maxWidth: "300px",
@@ -68,9 +136,16 @@ function SearchPnrsPage() {
             })}
           />
         </div>
-        {filtered.length === 0 ? (
-          <p>No matching PNRs.</p>
-        ) : (
+
+        {loading && <p>検索中...</p>}
+
+        {error && <p style={{ color: "red" }}>エラー: {error}</p>}
+
+        {!loading && !error && query.trim() && pnrs.length === 0 && (
+          <p>該当するPNRが見つかりませんでした。</p>
+        )}
+
+        {!loading && !error && pnrs.length > 0 && (
           <table className={css({ width: "100%", borderCollapse: "collapse" })}>
             <thead>
               <tr>
@@ -113,12 +188,12 @@ function SearchPnrsPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
+              {pnrs.map((p: PNRData) => (
                 <tr
                   key={p.id}
-                  onClick={() => handleRowClick(p.id)}
+                  onClick={() => p.id && handleRowClick(p.id)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === "Enter" && p.id) {
                       handleRowClick(p.id);
                     }
                   }}
@@ -144,7 +219,9 @@ function SearchPnrsPage() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.passengers.map((ps) => ps.name).join(", ")}
+                    {p.passengers
+                      ?.map((ps: { name: string }) => ps.name)
+                      .join(", ")}
                   </td>
                   <td
                     className={css({
@@ -152,7 +229,9 @@ function SearchPnrsPage() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.flights.map((f) => f.flightNumber).join(", ")}
+                    {p.flights
+                      ?.map((f: { flightNumber: string }) => f.flightNumber)
+                      .join(", ")}
                   </td>
                   <td
                     className={css({
@@ -160,7 +239,7 @@ function SearchPnrsPage() {
                       borderBottom: "1px solid #eee",
                     })}
                   >
-                    {p.note}
+                    {p.flights?.map((f) => f.flightNumber).join(", ")}
                   </td>
                 </tr>
               ))}

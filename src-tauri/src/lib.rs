@@ -70,6 +70,21 @@ fn text_print(vendor_id: u16, device_id: u16, text: String) -> Result<(), String
 }
 
 #[tauri::command]
+fn pass_print(vendor_id: u16, device_id: u16, bcbp_data: String) -> Result<(), String> {
+    let driver = NativeUsbDriver::open(vendor_id, device_id).map_err(|e| e.to_string())?;
+    let protocol = Protocol::default();
+    let mut printer = Printer::new(driver, protocol, None);
+    let printer = printer.init().map_err(|e| e.to_string())?;
+    printer
+        .writeln(&bcbp_data)
+        .and_then(|p: &mut Printer<NativeUsbDriver>| p.pdf417(&bcbp_data))
+        .and_then(|p| p.feeds(10))
+        .and_then(|p| p.print_cut())
+        .map_err(|e| e.to_string())?;
+    Ok(())
+}
+
+#[tauri::command]
 fn image_print(vendor_id: u16, device_id: u16, image: Vec<u8>) -> Result<(), String> {
     let driver = NativeUsbDriver::open(vendor_id, device_id).map_err(|e| e.to_string())?;
     let protocol = Protocol::default();
@@ -92,6 +107,7 @@ pub fn run() {
             get_usb_devices,
             text_print,
             image_print,
+            pass_print,
             test
           ])
         .run(tauri::generate_context!())
