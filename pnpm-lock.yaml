@@ -23,6 +23,9 @@ importers:
       '@types/js-cookie':
         specifier: ^3.0.6
         version: 3.0.6
+      bcbp:
+        specifier: ^6.0.2
+        version: 6.0.2
       js-cookie:
         specifier: ^3.0.5
         version: 3.0.5
@@ -1535,6 +1538,9 @@ packages:
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
+
+  bcbp@6.0.2:
+    resolution: {integrity: sha512-GOpIZW5+lgbpHghyuwBCm1SjneaCw3lk/oHpUtS+1HewAkhZKZfmGDG6U4toUMCS2KOOG3YuVU5Hkt34M8JVEg==}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -4321,6 +4327,8 @@ snapshots:
       - supports-color
 
   balanced-match@1.0.2: {}
+
+  bcbp@6.0.2: {}
 
   binary-extensions@2.3.0: {}
 

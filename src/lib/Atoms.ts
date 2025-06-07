@@ -43,7 +43,7 @@ export type Reservation = {
 
 export const reservationsAtom = atomWithStorage<Reservation[]>(
   "reservations",
-  [],
+  []
 );
 
 export type FlightReservation = {
@@ -60,7 +60,7 @@ export type FlightReservation = {
 
 export const flightReservationsAtom = atomWithStorage<FlightReservation[]>(
   "flightReservations",
-  [],
+  []
 );
 
 export type PnrPassenger = {
@@ -85,4 +85,4 @@ export type Pnr = {
   note: string;
 };
 
-export const pnrsAtom = atomWithStorage<Pnr[]>("pnrs", []);
+export const pnrsAtom = atom<Pnr[]>("pnrs", []);

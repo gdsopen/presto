@@ -3,6 +3,8 @@ import { useAtomValue } from "jotai";
 import { css } from "../../../styled-system/css";
 import { MainLayout } from "../../layouts/MainLayout";
 import { pnrsAtom } from "../../lib/Atoms";
+import { encode } from "bcbp";
+import { invoke } from "@tauri-apps/api/core";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs/details")({
@@ -14,8 +16,61 @@ function PnrDetail() {
   const id = urlParams.get("id");
   const pnrs = useAtomValue(pnrsAtom);
   console.log("URL ID:", id);
-  console.log("All PNRs:", pnrs);
   const pnr = pnrs.find((p) => p.id === id?.toString());
+
+  const handlePrintBoardingPass = async () => {
+    if (!pnr) return;
+    try {
+      const bcbpData = encode({
+        data: {
+          passengerName: pnr.passengers[0].name,
+          passengerDescription: pnr.passengers[0].name,
+          //W - Web  K - Airport Kiosk  R - Remote or Off Site Kiosk  M - Mobile Device  O - Airport Agent  T - Town Agent  V - Third Party Vendor
+          checkInSource: "W",
+          boardingPassIssuanceSource: "O",
+          issuanceDate: new Date(),
+          documentType: "B",
+          boardingPassIssuerDesignator: "XA",
+          legs: [
+            {
+              operatingCarrierPNR: pnr.recordLocator,
+              departureAirport: pnr.flights[0].from,
+              arrivalAirport: pnr.flights[0].to,
+              operatingCarrierDesignator: pnr.flights[0].flightNumber.slice(
+                0,
+                2
+              ),
+              flightNumber: pnr.flights[0].flightNumber.slice(2),
+              flightDate: new Date(),
+              compartmentCode: "Y",
+              seatNumber: pnr.flights[0].seat,
+              checkInSequenceNumber: "1",
+              passengerStatus: "1",
+              marketingCarrierDesignator: pnr.flights[0].flightNumber.slice(
+                0,
+                2
+              ),
+              frequentFlyerAirlineDesignator: "1",
+              frequentFlyerNumber: "1",
+              idIndicator: "1",
+            },
+          ],
+        },
+        meta: {
+          formatCode: "M",
+          numberOfLegs: pnr.flights.length,
+          electronicTicketIndicator: "E",
+          versionNumber: 6,
+        },
+      });
+
+      console.log(bcbpData);
+
+      await invoke("image_print", { bcbpData });
+    } catch (error) {
+      console.error("Failed to print boarding pass:", error);
+    }
+  };
 
   if (!pnr) {
     return (
@@ -39,9 +94,25 @@ function PnrDetail() {
               backgroundColor: "#f5f5f5",
               cursor: "pointer",
               marginBottom: "20px",
+              marginRight: "10px",
             })}
           >
             ← Back
+          </button>
+          <button
+            type="button"
+            onClick={handlePrintBoardingPass}
+            className={css({
+              padding: "8px 16px",
+              border: "1px solid #4CAF50",
+              borderRadius: "5px",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              cursor: "pointer",
+              marginBottom: "20px",
+            })}
+          >
+            Print Boarding Pass
           </button>
         </div>
 
