@@ -51,7 +51,10 @@ function SearchPnrsPage() {
           return;
         }
 
-        const response = await getPnrByName(token.token, query.trim());
+        const response = await getPnrByName(
+          token.token,
+          query.trim().toUpperCase()
+        );
         if (response.data) {
           // APIレスポンスが単一のPNRの場合、配列に変換
           const pnrArray = Array.isArray(response.data)
@@ -69,7 +72,7 @@ function SearchPnrsPage() {
               ],
               flights: [], // フライト情報は別途取得が必要な場合があります
               note: pnrData.documentType || "",
-            }),
+            })
           );
 
           setPnrs(convertedPnrs);
