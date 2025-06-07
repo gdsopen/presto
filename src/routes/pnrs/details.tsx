@@ -44,7 +44,7 @@ function PnrDetail() {
         setError(
           `PNRの取得に失敗しました: ${
             err instanceof Error ? err.message : "Unknown error"
-          }`,
+          }`
         );
       } finally {
         setLoading(false);
@@ -100,16 +100,177 @@ function PnrDetail() {
     });
   }, [pnr]);
 
+  const generateBoardingPassFromSVG = async (flightData: {
+    name1: string;
+    name2: string;
+    from: string | undefined;
+    to: string | undefined;
+    seat: string | undefined | null;
+    gate: string | null;
+    departuretime: string | null;
+    flightairflightnum: string | null;
+    operatingcareer: string | undefined;
+    note: string | null;
+    class: string | undefined;
+    fromairport: string | undefined;
+    toairport: string | undefined;
+    boardingtime: string | null;
+  }): Promise<Uint8Array> => {
+    // SVGファイルを読み込み
+    const response = await fetch("/boardingpass.svg");
+    if (!response.ok) {
+      throw new Error("SVGファイルの読み込みに失敗しました");
+    }
+    let svgContent = await response.text();
+
+    // プレースホルダーを実際の値で置き換え
+    svgContent = svgContent.replace(
+      /name1name2/g,
+      `${flightData.name1}${flightData.name2}`
+    );
+    svgContent = svgContent.replace(/>name1</g, `>${flightData.name1}<`);
+    svgContent = svgContent.replace(/>name2</g, `>${flightData.name2}<`);
+    svgContent = svgContent.replace(
+      /FROM from/g,
+      `FROM ${flightData.from || "N/A"}`
+    );
+    svgContent = svgContent.replace(
+      /TO {3}to/g,
+      `TO   ${flightData.to || "N/A"}`
+    );
+    svgContent = svgContent.replace(
+      /SEAT seat/g,
+      `SEAT ${flightData.seat || "N/A"}`
+    );
+    svgContent = svgContent.replace(/>seat</g, `>${flightData.seat || "N/A"}<`);
+    svgContent = svgContent.replace(
+      /GATE gate/g,
+      `GATE ${flightData.gate || "TBD"}`
+    );
+    svgContent = svgContent.replace(/>gate</g, `>${flightData.gate || "TBD"}<`);
+    svgContent = svgContent.replace(
+      />departuretime</g,
+      `>${flightData.departuretime || "N/A"}<`
+    );
+    svgContent = svgContent.replace(
+      /flightairflightnum OPERATED BY operatingcareer/g,
+      `${flightData.flightairflightnum || "N/A"} OPERATED BY ${
+        flightData.operatingcareer || "N/A"
+      }`
+    );
+    svgContent = svgContent.replace(/>note</g, `>${flightData.note || ""}<`);
+    svgContent = svgContent.replace(
+      />class</g,
+      `>${flightData.class || "N/A"}<`
+    );
+    svgContent = svgContent.replace(
+      />fromairport</g,
+      `>${flightData.fromairport || "N/A"}<`
+    );
+    svgContent = svgContent.replace(
+      />toairport</g,
+      `>${flightData.toairport || "N/A"}<`
+    );
+    svgContent = svgContent.replace(
+      />boardingtime</g,
+      `>${flightData.boardingtime || "N/A"}<`
+    );
+
+    // SVGをImageオブジェクトとして読み込み
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        // キャンバスを作成してSVGを描画（印刷に適したサイズに設定）
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        if (!ctx) {
+          reject(new Error("Canvas context の取得に失敗しました"));
+          return;
+        }
+
+        // 印刷に適したサイズを設定（搭乗券として十分な解像度）
+        const targetWidth = 640;
+        const targetHeight = 1300;
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        // 背景を白色で塗りつぶし
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // SVGをキャンバスに適切にスケールして描画
+        const scaleX = targetWidth / (img.width || targetWidth);
+        const scaleY = targetHeight / (img.height || targetHeight);
+        const scale = Math.min(scaleX, scaleY); // アスペクト比を保持
+
+        const scaledWidth = img.width * scale;
+        const scaledHeight = img.height * scale;
+        const x = (targetWidth - scaledWidth) / 2;
+        const y = (targetHeight - scaledHeight) / 2;
+
+        ctx.drawImage(img, x, y, scaledWidth, scaledHeight);
+
+        // キャンバスからBlobを作成
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            const arrayBuffer = await blob.arrayBuffer();
+            resolve(new Uint8Array(arrayBuffer));
+          } else {
+            reject(new Error("Blobの作成に失敗しました"));
+          }
+        }, "image/png");
+      };
+
+      img.onerror = () => {
+        reject(new Error("SVG画像の読み込みに失敗しました"));
+      };
+
+      // SVGをdata URLとして設定
+      const svgBlob = new Blob([svgContent], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(svgBlob);
+      img.src = url;
+    });
+  };
+
   const handlePrintBoardingPass = async () => {
-    if (!bcbpData) return;
+    if (!bcbpData || !pnr) return;
 
     try {
+      const firstFlight = pnr.passengerFlightRecord[0];
+      const flightData = {
+        name1: pnr.firstName,
+        name2: pnr.lastName,
+        from: firstFlight?.departurePort,
+        to: firstFlight?.arrivalPort,
+        seat: firstFlight?.seatNumber,
+        gate: null,
+        departuretime: firstFlight
+          ? new Date(firstFlight.departureDate).toLocaleTimeString()
+          : null,
+        flightairflightnum: firstFlight
+          ? `${firstFlight.operatingCarrier}${firstFlight.flightNumber}`
+          : null,
+        operatingcareer: firstFlight?.operatingCarrier,
+        note: null,
+        class: firstFlight?.compartmentCode,
+        fromairport: firstFlight?.departurePort,
+        toairport: firstFlight?.arrivalPort,
+        boardingtime: null,
+      };
+
+      // SVGから搭乗券画像を生成
+      const imageData = await generateBoardingPassFromSVG(flightData);
+
       console.log(bcbpData);
       console.log(vendor_id, device_id);
+
       await invoke("pass_print", {
         vendorId: vendor_id,
         deviceId: device_id,
         bcbpData: bcbpData,
+        imageData: Array.from(imageData), // Uint8ArrayをArrayに変換
       });
     } catch (error) {
       console.error("搭乗券の印刷に失敗しました:", error);

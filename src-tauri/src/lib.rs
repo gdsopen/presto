@@ -61,44 +61,36 @@ fn text_print(vendor_id: u16, device_id: u16, text: String) -> Result<(), String
     let printer = printer.init().map_err(|e| e.to_string())?;
     printer
         .writeln(&text)
-        .and_then(|p| p.font(Font::B))
-        .and_then(|p| p.writeln(&text))
         .and_then(|p| p.feeds(10))
         .and_then(|p| p.print_cut())
         .map_err(|e| e.to_string())?;
     Ok(())
 }
 
-#[tauri::command]
-fn pass_print(vendor_id: u16, device_id: u16, bcbp_data: String) -> Result<(), String> {
-    let driver = NativeUsbDriver::open(vendor_id, device_id).map_err(|e| e.to_string())?;
-    let protocol = Protocol::default();
-    let mut printer = Printer::new(driver, protocol, None);
-    let printer = printer.init().map_err(|e| e.to_string())?;
-    printer
-        .writeln(&bcbp_data)
-        .and_then(|p: &mut Printer<NativeUsbDriver>| p.pdf417(&bcbp_data))
-        .and_then(|p| p.feeds(10))
-        .and_then(|p| p.print_cut())
-        .map_err(|e| e.to_string())?;
-    Ok(())
-}
+
 
 #[tauri::command]
-fn image_print(vendor_id: u16, device_id: u16, image: Vec<u8>) -> Result<(), String> {
+fn pass_print(vendor_id: u16, device_id: u16, bcbp_data: String, image_data: Vec<u8>) -> Result<(), String> {
+
     let driver = NativeUsbDriver::open(vendor_id, device_id).map_err(|e| e.to_string())?;
     let protocol = Protocol::default();
     let mut printer = Printer::new(driver, protocol, None);
     let printer = printer.init().map_err(|e| e.to_string())?;
-    printer
-        .bit_image_from_bytes_option(
-            &image,
-            BitImageOption::new(Some(800), None, BitImageSize::Normal).unwrap(),
+    
+    // BCBPデータを印刷
+    printer.bit_image_from_bytes_option(
+            &image_data,
+            BitImageOption::new(Some(1600), Some(1800), BitImageSize::Normal).unwrap(),
         )
-        .and_then(|p| p.print())
+        .and_then(|p: &mut Printer<NativeUsbDriver>| p.feeds(4))
+        .and_then(|p: &mut Printer<NativeUsbDriver>| p.pdf417(&bcbp_data))
+        .and_then(|p: &mut Printer<NativeUsbDriver>| p.feeds(1))
+        .and_then(|p: &mut Printer<NativeUsbDriver>| p.print())
         .map_err(|e| e.to_string())?;
+    
     Ok(())
 }
+
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -106,7 +98,6 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_usb_devices,
             text_print,
-            image_print,
             pass_print,
             test
           ])
