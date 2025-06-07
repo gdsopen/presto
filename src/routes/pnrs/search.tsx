@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { css } from "../../../styled-system/css";
-import { MainLayout } from "../../layouts/MainLayout";
-import { authTokenAtom } from "../../lib/Atoms";
 import { getPnrByName } from "../../api/client";
 import type { components } from "../../api/generated/types";
+import { MainLayout } from "../../layouts/MainLayout";
+import { authTokenAtom } from "../../lib/Atoms";
 
 // APIから取得したPNRデータの型定義
 type PNRData = components["schemas"]["PassengerNameRecord"] & {
@@ -69,7 +69,7 @@ function SearchPnrsPage() {
               ],
               flights: [], // フライト情報は別途取得が必要な場合があります
               note: pnrData.documentType || "",
-            })
+            }),
           );
 
           setPnrs(convertedPnrs);

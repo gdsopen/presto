@@ -18,7 +18,7 @@ export const useLoginValidation = (): {
   isInitialized: boolean;
   validateLogin: (
     id: string,
-    password: string
+    password: string,
   ) => Promise<LoginValidationResult>;
   logout: () => void;
 } => {
@@ -30,7 +30,7 @@ export const useLoginValidation = (): {
 
   const validateLogin = async (
     id: string,
-    password: string
+    password: string,
   ): Promise<LoginValidationResult> => {
     setIsLoading(true);
     try {

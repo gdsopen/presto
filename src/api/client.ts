@@ -51,7 +51,7 @@ export const getAllUsers = async (token: string) => {
 
 export const updateUser = async (
   token: string,
-  data: components["schemas"]["UpdateUser"]
+  data: components["schemas"]["UpdateUser"],
 ) => {
   try {
     const res = await client.PUT("/admin/update", {
@@ -69,7 +69,7 @@ export const updateUser = async (
 
 export const updateOtherUser = async (
   token: string,
-  data: components["schemas"]["UpdateOtherUser"]
+  data: components["schemas"]["UpdateOtherUser"],
 ) => {
   try {
     const res = await client.PUT("/admin/update", {
@@ -87,7 +87,7 @@ export const updateOtherUser = async (
 
 export const signUp = async (
   token: string,
-  data: components["schemas"]["CreateUserFromAdmin"]
+  data: components["schemas"]["CreateUserFromAdmin"],
 ) => {
   try {
     const res = await client.POST("/admin/signup", {
@@ -139,7 +139,7 @@ export const getPassengerPNR = async (token: string, id: string) => {
 
 export const updatePassengerPNR = async (
   token: string,
-  data: components["schemas"]["PassengerNameRecordUpdate"]
+  data: components["schemas"]["PassengerNameRecordUpdate"],
 ) => {
   try {
     const res = await client.PUT("/pnr/passenger", {
@@ -157,7 +157,7 @@ export const updatePassengerPNR = async (
 
 export const createPassengerPNR = async (
   token: string,
-  data: components["schemas"]["PassengerNameRecord"]
+  data: components["schemas"]["PassengerNameRecord"],
 ) => {
   try {
     const res = await client.POST("/pnr/passenger", {
@@ -190,7 +190,7 @@ export const deletePassengerPNR = async (token: string, id: string) => {
 
 export const searchPassengerPNR = async (
   token: string,
-  data: components["schemas"]["Search"]
+  data: components["schemas"]["Search"],
 ) => {
   try {
     const res = await client.POST("/pnr/passenger/search", {
@@ -208,7 +208,7 @@ export const searchPassengerPNR = async (
 
 export const updateFlightRecord = async (
   token: string,
-  data: components["schemas"]["PassengerFlightRecordUpdate"]
+  data: components["schemas"]["PassengerFlightRecordUpdate"],
 ) => {
   try {
     const res = await client.PUT("/pnr/flight", {
@@ -226,7 +226,7 @@ export const updateFlightRecord = async (
 
 export const createFlightRecord = async (
   token: string,
-  data: components["schemas"]["PassengerFlightRecord"]
+  data: components["schemas"]["PassengerFlightRecord"],
 ) => {
   try {
     const res = await client.POST("/pnr/flight", {

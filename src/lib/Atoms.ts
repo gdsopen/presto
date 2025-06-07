@@ -24,7 +24,7 @@ export const authTokenAtom = atom<AuthToken>({
       ? (() => {
           const cookies = document.cookie.split(";");
           const adminTokenCookie = cookies.find((c) =>
-            c.trim().startsWith("admin_token=")
+            c.trim().startsWith("admin_token="),
           );
           return adminTokenCookie ? adminTokenCookie.split("=")[1] : "";
         })()
@@ -52,7 +52,7 @@ export type Reservation = {
 
 export const reservationsAtom = atomWithStorage<Reservation[]>(
   "reservations",
-  []
+  [],
 );
 
 export type FlightReservation = {
@@ -69,7 +69,7 @@ export type FlightReservation = {
 
 export const flightReservationsAtom = atomWithStorage<FlightReservation[]>(
   "flightReservations",
-  []
+  [],
 );
 
 export type PnrPassenger = {

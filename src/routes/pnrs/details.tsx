@@ -1,13 +1,13 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
-import { useState, useEffect, useMemo } from "react";
-import { css } from "../../../styled-system/css";
-import { MainLayout } from "../../layouts/MainLayout";
-import { getPassengerPNR } from "../../api/client";
-import { encode } from "bcbp";
 import { invoke } from "@tauri-apps/api/core";
-import type { components } from "../../api/generated/types";
-import { authTokenAtom, printerAtom } from "../../lib/Atoms";
+import { encode } from "bcbp";
 import { useAtomValue } from "jotai";
+import { useEffect, useMemo, useState } from "react";
+import { css } from "../../../styled-system/css";
+import { getPassengerPNR } from "../../api/client";
+import type { components } from "../../api/generated/types";
+import { MainLayout } from "../../layouts/MainLayout";
+import { authTokenAtom, printerAtom } from "../../lib/Atoms";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs/details")({
@@ -44,7 +44,7 @@ function PnrDetail() {
         setError(
           `PNRの取得に失敗しました: ${
             err instanceof Error ? err.message : "Unknown error"
-          }`
+          }`,
         );
       } finally {
         setLoading(false);

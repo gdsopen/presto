@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { css } from "../../../styled-system/css";
-import { MainLayout } from "../../layouts/MainLayout";
-import { MenuCard } from "../../components/MenuCard";
 import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { css } from "../../../styled-system/css";
+import { MenuCard } from "../../components/MenuCard";
+import { MainLayout } from "../../layouts/MainLayout";
 
 // biome-ignore lint/suspicious/noExplicitAny: file-based route
 export const Route = (createFileRoute as any)("/pnrs")({

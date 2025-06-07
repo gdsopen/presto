@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useFieldArray, useForm } from "react-hook-form";
 import { useState } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
 import { css } from "../../../styled-system/css";
-import { MainLayout } from "../../layouts/MainLayout";
-import { createPassengerPNR, createFlightRecord } from "../../api/client";
+import { createFlightRecord, createPassengerPNR } from "../../api/client";
 import type { components } from "../../api/generated/types";
+import { MainLayout } from "../../layouts/MainLayout";
 import { authTokenAtom } from "../../lib/Atoms";
 import { generateRecordLocator } from "../../lib/utils";
 
@@ -120,7 +120,7 @@ function NewPnrPage() {
 
           const flightResult = await createFlightRecord(
             token.token,
-            flightData
+            flightData,
           );
 
           if (flightResult.error) {
