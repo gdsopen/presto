@@ -44,7 +44,7 @@ function PnrDetail() {
         setError(
           `PNRの取得に失敗しました: ${
             err instanceof Error ? err.message : "Unknown error"
-          }`
+          }`,
         );
       } finally {
         setLoading(false);
@@ -126,54 +126,54 @@ function PnrDetail() {
     // プレースホルダーを実際の値で置き換え
     svgContent = svgContent.replace(
       /name1name2/g,
-      `${flightData.name1}${flightData.name2}`
+      `${flightData.name1}${flightData.name2}`,
     );
     svgContent = svgContent.replace(/>name1</g, `>${flightData.name1}<`);
     svgContent = svgContent.replace(/>name2</g, `>${flightData.name2}<`);
     svgContent = svgContent.replace(
       /FROM from/g,
-      `FROM ${flightData.from || "N/A"}`
+      `FROM ${flightData.from || "N/A"}`,
     );
     svgContent = svgContent.replace(
       /TO {3}to/g,
-      `TO   ${flightData.to || "N/A"}`
+      `TO   ${flightData.to || "N/A"}`,
     );
     svgContent = svgContent.replace(
       /SEAT seat/g,
-      `SEAT ${flightData.seat || "N/A"}`
+      `SEAT ${flightData.seat || "N/A"}`,
     );
     svgContent = svgContent.replace(/>seat</g, `>${flightData.seat || "N/A"}<`);
     svgContent = svgContent.replace(
       /GATE gate/g,
-      `GATE ${flightData.gate || "TBD"}`
+      `GATE ${flightData.gate || "TBD"}`,
     );
     svgContent = svgContent.replace(/>gate</g, `>${flightData.gate || "TBD"}<`);
     svgContent = svgContent.replace(
       />departuretime</g,
-      `>${flightData.departuretime || "N/A"}<`
+      `>${flightData.departuretime || "N/A"}<`,
     );
     svgContent = svgContent.replace(
       /flightairflightnum OPERATED BY operatingcareer/g,
       `${flightData.flightairflightnum || "N/A"} OPERATED BY ${
         flightData.operatingcareer || "N/A"
-      }`
+      }`,
     );
     svgContent = svgContent.replace(/>note</g, `>${flightData.note || ""}<`);
     svgContent = svgContent.replace(
       />class</g,
-      `>${flightData.class || "N/A"}<`
+      `>${flightData.class || "N/A"}<`,
     );
     svgContent = svgContent.replace(
       />fromairport</g,
-      `>${flightData.fromairport || "N/A"}<`
+      `>${flightData.fromairport || "N/A"}<`,
     );
     svgContent = svgContent.replace(
       />toairport</g,
-      `>${flightData.toairport || "N/A"}<`
+      `>${flightData.toairport || "N/A"}<`,
     );
     svgContent = svgContent.replace(
       />boardingtime</g,
-      `>${flightData.boardingtime || "N/A"}<`
+      `>${flightData.boardingtime || "N/A"}<`,
     );
 
     // SVGをImageオブジェクトとして読み込み
